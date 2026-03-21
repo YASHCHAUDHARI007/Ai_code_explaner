@@ -9,6 +9,7 @@ import { type AiProjectOverviewOutput } from '@/ai/flows/ai-project-overview';
 import { type CodeExplanationOutput } from '@/ai/flows/ai-line-by-line-explanation';
 import { type DebugCodeOutput } from '@/ai/flows/ai-debugging-assistant-flow';
 import { useToast } from '@/hooks/use-toast';
+import { Toaster } from '@/components/ui/toaster';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
@@ -40,15 +41,15 @@ export default function Home() {
       setDebugging(debugRes);
 
       toast({
-        title: "Analysis Complete",
-        description: "Your code has been successfully processed by our AI engine.",
+        title: "Analysis Successful",
+        description: "AI insights have been generated for your snippet.",
       });
     } catch (error) {
       console.error("Analysis failed:", error);
       toast({
         variant: "destructive",
-        title: "Analysis Failed",
-        description: "An unexpected error occurred while communicating with the AI service.",
+        title: "System Error",
+        description: "The AI engine encountered an issue processing your request.",
       });
     } finally {
       setIsLoading(false);
@@ -65,7 +66,7 @@ export default function Home() {
           <div className="space-y-6 flex flex-col">
             <div className="space-y-1">
               <h2 className="text-3xl font-headline font-bold text-foreground">Code Input</h2>
-              <p className="text-muted-foreground">Provide source code for instant AI-driven architectural and semantic insights.</p>
+              <p className="text-muted-foreground">Paste your snippet below for structural and logic analysis.</p>
             </div>
             <div className="flex-1">
               <InputArea onAnalyze={handleAnalyze} isLoading={isLoading} />
@@ -75,8 +76,8 @@ export default function Home() {
           {/* Right Column: Output */}
           <div className="space-y-6 flex flex-col">
             <div className="space-y-1">
-              <h2 className="text-3xl font-headline font-bold text-foreground">Insights</h2>
-              <p className="text-muted-foreground">Detailed breakdown, debugging analysis, and high-level project summary.</p>
+              <h2 className="text-3xl font-headline font-bold text-foreground">AI Insights</h2>
+              <p className="text-muted-foreground">Architectural overview, detailed breakdown, and security analysis.</p>
             </div>
             <div className="flex-1 min-h-[400px]">
               <OutputArea 
@@ -92,14 +93,13 @@ export default function Home() {
 
       <footer className="border-t bg-card py-8 mt-12">
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-muted-foreground uppercase tracking-widest font-medium">
-          <p>© 2024 AI Codebase Explainer & Debugger</p>
+          <p>© 2024 AI Code Intelligence Lab</p>
           <div className="flex gap-8">
-            <a href="#" className="hover:text-accent transition-colors">Documentation</a>
-            <a href="#" className="hover:text-accent transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-accent transition-colors">Terms of Service</a>
+            <span className="cursor-default">Version 1.0.0 Stable</span>
           </div>
         </div>
       </footer>
+      <Toaster />
     </div>
   );
 }
