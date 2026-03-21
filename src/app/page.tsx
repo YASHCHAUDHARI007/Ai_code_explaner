@@ -1,10 +1,11 @@
+
 'use client';
 
 import { useState } from 'react';
 import { Header } from '@/components/Header';
 import { InputArea } from '@/components/InputArea';
 import { OutputArea } from '@/components/OutputArea';
-import { getProjectOverview, getLineByLineExplanation, getDebugAnalysis, getErrorAnalysis } from '@/lib/actions';
+import { getProjectOverview, getLineByLineExplanation, getDebugAnalysis, getErrorAnalysis, getDetectedLanguage } from '@/lib/actions';
 import { type AiProjectOverviewOutput } from '@/ai/flows/ai-project-overview';
 import { type CodeExplanationOutput } from '@/ai/flows/ai-line-by-line-explanation';
 import { type DebugCodeOutput } from '@/ai/flows/ai-debugging-assistant-flow';
@@ -31,12 +32,24 @@ export default function Home() {
     setErrorAnalysis(null);
 
     try {
+      let finalLanguage = language;
+      
+      // Auto-detect language if requested
+      if (language === 'auto') {
+        const detection = await getDetectedLanguage(code);
+        finalLanguage = detection.language;
+        toast({
+          title: "Language Detected",
+          description: `Identified as ${finalLanguage.toUpperCase()} (${Math.round(detection.confidence * 100)}% confidence)`,
+        });
+      }
+
       // Use Promise.allSettled for maximum resilience
       const results = await Promise.allSettled([
         getProjectOverview(code),
-        getLineByLineExplanation(code, language),
-        getDebugAnalysis(code, language),
-        errorMessage ? getErrorAnalysis(code, errorMessage, language) : Promise.resolve(null)
+        getLineByLineExplanation(code, finalLanguage),
+        getDebugAnalysis(code, finalLanguage),
+        errorMessage ? getErrorAnalysis(code, errorMessage, finalLanguage) : Promise.resolve(null)
       ]);
 
       if (results[0].status === 'fulfilled') setOverview(results[0].value);
@@ -78,7 +91,7 @@ export default function Home() {
           <div className="space-y-6 flex flex-col">
             <div className="space-y-1">
               <h2 className="text-3xl font-headline font-bold text-foreground">Code Input</h2>
-              <p className="text-muted-foreground">Paste your snippet and optional error logs below.</p>
+              <p className="text-muted-foreground">Paste code, upload files, or import from GitHub.</p>
             </div>
             <div className="flex-1">
               <InputArea onAnalyze={handleAnalyze} isLoading={isLoading} />
@@ -107,7 +120,7 @@ export default function Home() {
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-muted-foreground uppercase tracking-widest font-medium">
           <p>© 2024 AI Code Intelligence Lab</p>
           <div className="flex gap-8">
-            <span className="cursor-default">Resilient Error Handling Enabled</span>
+            <span className="cursor-default">Auto-Detection Enabled</span>
             <span className="cursor-default">Engine: Groq Llama 3.1</span>
           </div>
         </div>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/select";
 
 const LANGUAGES = [
+  { value: 'auto', label: '✨ Auto-detect' },
   { value: 'python', label: 'Python' },
   { value: 'javascript', label: 'JavaScript' },
   { value: 'typescript', label: 'TypeScript' },
