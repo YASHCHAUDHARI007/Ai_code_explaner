@@ -31,7 +31,9 @@ const prompt = ai.definePrompt({
   prompt: `You are an expert software architect. Your task is to provide a concise, high-level summary of the provided codebase. Focus on its overall purpose, main functionalities, and core technologies used.
 
 Codebase:
-{{{code}}}`,
+\x60\x60\x60
+{{{code}}}
+\x60\x60\x60`,
 });
 
 const aiProjectOverviewFlow = ai.defineFlow(
