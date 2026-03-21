@@ -3,20 +3,22 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Info, ListChecks, Bug, Terminal, ChevronRight, Cpu } from 'lucide-react';
+import { Info, ListChecks, Bug, Terminal, ChevronRight, Cpu, Zap, ShieldAlert } from 'lucide-react';
 import { type AiProjectOverviewOutput } from '@/ai/flows/ai-project-overview';
 import { type CodeExplanationOutput } from '@/ai/flows/ai-line-by-line-explanation';
 import { type DebugCodeOutput } from '@/ai/flows/ai-debugging-assistant-flow';
+import { type ErrorAnalysisOutput } from '@/ai/flows/ai-error-analysis-flow';
 
 interface OutputAreaProps {
   overview: AiProjectOverviewOutput | null;
   explanations: CodeExplanationOutput | null;
   debugging: DebugCodeOutput | null;
+  errorAnalysis: ErrorAnalysisOutput | null;
   code: string;
 }
 
-export function OutputArea({ overview, explanations, debugging, code }: OutputAreaProps) {
-  if (!overview && !explanations && !debugging) {
+export function OutputArea({ overview, explanations, debugging, errorAnalysis, code }: OutputAreaProps) {
+  if (!overview && !explanations && !debugging && !errorAnalysis) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-card/50 border-2 border-dashed rounded-2xl">
         <Terminal className="h-16 w-16 text-muted-foreground/30 mb-4" />
@@ -31,161 +33,172 @@ export function OutputArea({ overview, explanations, debugging, code }: OutputAr
       <TabsList className="flex w-full bg-secondary h-11 overflow-x-auto">
         <TabsTrigger value="overview" className="flex-1 flex items-center gap-2 data-[state=active]:bg-background">
           <Info className="h-4 w-4" />
-          <span>Overview</span>
+          <span>Architecture</span>
         </TabsTrigger>
         <TabsTrigger value="explanations" className="flex-1 flex items-center gap-2 data-[state=active]:bg-background">
           <ListChecks className="h-4 w-4" />
-          <span>Explanation</span>
+          <span>Explain</span>
         </TabsTrigger>
         <TabsTrigger value="debugging" className="flex-1 flex items-center gap-2 data-[state=active]:bg-background">
-          <Bug className="h-4 w-4 text-destructive" />
-          <span>Debugger</span>
+          <Bug className="h-4 w-4" />
+          <span>Static Bugs</span>
+        </TabsTrigger>
+        <TabsTrigger value="error-analysis" className="flex-1 flex items-center gap-2 data-[state=active]:bg-background">
+          <ShieldAlert className="h-4 w-4 text-destructive" />
+          <span>Runtime Fix</span>
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="overview" className="mt-4 animate-in fade-in duration-500">
+      <TabsContent value="overview" className="mt-4 animate-in slide-in-from-bottom-2 duration-300">
         <Card className="border-accent/20 bg-accent/5">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-accent text-xl">
-              <SparkleIcon className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-accent text-xl font-headline">
+              <Cpu className="h-5 w-5" />
               Project Architecture
             </CardTitle>
-            <CardDescription>Generated high-level summary of the provided code</CardDescription>
+            <CardDescription>High-level structural analysis</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {overview ? (
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-accent uppercase tracking-wider">Purpose</h4>
+                  <h4 className="text-[10px] font-bold text-accent uppercase tracking-widest">Purpose</h4>
                   <p className="text-foreground leading-relaxed">{overview.purpose}</p>
                 </div>
-                
                 <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-accent uppercase tracking-wider">Functionality</h4>
+                  <h4 className="text-[10px] font-bold text-accent uppercase tracking-widest">Functionality</h4>
                   <p className="text-foreground leading-relaxed">{overview.functionality}</p>
                 </div>
-
                 <div className="space-y-2">
-                  <h4 className="text-sm font-bold text-accent uppercase tracking-wider flex items-center gap-2">
-                    <Cpu className="h-4 w-4" />
-                    Core Technologies
-                  </h4>
+                  <h4 className="text-[10px] font-bold text-accent uppercase tracking-widest">Tech Stack</h4>
                   <div className="flex flex-wrap gap-2">
-                    {overview.coreTechnologies.map((tech: string, index: number) => (
-                      <Badge key={index} variant="secondary" className="bg-background border-accent/20 text-accent">
+                    {overview.coreTechnologies.map((tech, idx) => (
+                      <Badge key={idx} variant="secondary" className="bg-background border-accent/20 text-accent font-code text-[10px]">
                         {tech}
                       </Badge>
                     ))}
-                    {overview.coreTechnologies.length === 0 && (
-                      <span className="text-sm text-muted-foreground italic">None identified</span>
-                    )}
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="py-8 text-center text-muted-foreground italic">
-                Gathering architectural insights...
-              </div>
-            )}
+            ) : <LoadingPlaceholder label="Computing structure..." />}
           </CardContent>
         </Card>
       </TabsContent>
 
-      <TabsContent value="explanations" className="mt-4 animate-in fade-in duration-500">
-        <div className="space-y-4">
-          <div className="bg-card border rounded-xl overflow-hidden">
-            <div className="bg-muted p-3 border-b flex items-center justify-between">
-              <span className="text-xs font-code text-muted-foreground">Detailed Breakdown</span>
-            </div>
-            <div className="divide-y">
-              {explanations?.explanations.map((exp, idx) => (
-                <div key={idx} className="flex group hover:bg-accent/5 transition-colors">
-                  <div className="w-12 bg-muted/30 p-4 text-xs font-code text-muted-foreground text-right select-none border-r">
-                    {idx + 1}
-                  </div>
-                  <div className="flex-1 p-4 space-y-2">
-                    <pre className="text-sm font-code text-foreground overflow-x-auto">
-                      <code>{exp.line}</code>
-                    </pre>
-                    <div className="flex items-start gap-2 bg-secondary/50 p-2 rounded border-l-2 border-accent">
-                      <ChevronRight className="h-4 w-4 text-accent mt-0.5 shrink-0" />
-                      <p className="text-sm text-muted-foreground italic">
-                        {exp.explanation}
-                      </p>
-                    </div>
-                  </div>
+      <TabsContent value="explanations" className="mt-4 animate-in slide-in-from-bottom-2 duration-300">
+        <div className="bg-card border rounded-xl overflow-hidden divide-y">
+          {explanations?.explanations.map((exp, idx) => (
+            <div key={idx} className="flex group hover:bg-accent/5 transition-colors">
+              <div className="w-10 bg-muted/30 p-4 text-[10px] font-code text-muted-foreground text-right border-r shrink-0">
+                {idx + 1}
+              </div>
+              <div className="flex-1 p-4 overflow-hidden">
+                <pre className="text-sm font-code text-foreground overflow-x-auto scrollbar-hide">
+                  <code>{exp.line}</code>
+                </pre>
+                <div className="mt-2 flex items-start gap-2 text-sm text-muted-foreground italic bg-secondary/30 p-2 rounded">
+                  <ChevronRight className="h-3 w-3 mt-1 shrink-0 text-accent" />
+                  {exp.explanation}
                 </div>
-              ))}
-              {(!explanations || explanations.explanations.length === 0) && (
-                <div className="p-8 text-center text-muted-foreground">
-                  Analyzing line by line...
-                </div>
-              )}
+              </div>
             </div>
-          </div>
+          )) || <LoadingPlaceholder label="Deconstructing logic..." />}
         </div>
       </TabsContent>
 
-      <TabsContent value="debugging" className="mt-4 animate-in fade-in duration-500">
-        <div className="space-y-4">
-          {debugging?.bugs && debugging.bugs.length > 0 ? (
-            debugging.bugs.map((bug, idx) => (
-              <Card key={idx} className="border-destructive/30 bg-destructive/5 overflow-hidden">
-                <div className="bg-destructive/10 px-4 py-2 border-b flex items-center justify-between">
-                  <Badge variant="destructive" className="font-headline">Bug #{idx + 1}</Badge>
-                  {bug.lineNumber && <span className="text-xs text-muted-foreground">Line {bug.lineNumber}</span>}
+      <TabsContent value="debugging" className="mt-4 space-y-4 animate-in slide-in-from-bottom-2 duration-300">
+        {debugging?.bugs.length ? (
+          debugging.bugs.map((bug, idx) => (
+            <Card key={idx} className="border-destructive/20 bg-destructive/5">
+              <CardContent className="p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <Badge variant="destructive" className="font-headline tracking-tighter uppercase text-[10px]">Security / Logic Issue</Badge>
+                  {bug.lineNumber && <span className="text-[10px] text-muted-foreground font-code">L:{bug.lineNumber}</span>}
                 </div>
-                <CardContent className="pt-4 space-y-4">
-                  <div>
-                    <h4 className="font-bold text-foreground flex items-center gap-2 mb-1">
-                      <span className="h-1.5 w-1.5 rounded-full bg-destructive" />
-                      Problem
-                    </h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{bug.description}</p>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-accent flex items-center gap-2 mb-1">
-                      <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-                      Suggested Fix
-                    </h4>
-                    <pre className="bg-background/80 p-3 rounded-lg border text-xs font-code text-accent overflow-x-auto my-2">
-                      <code>{bug.suggestion}</code>
-                    </pre>
-                  </div>
-                  <div className="bg-background/40 p-3 rounded-lg border-l-2 border-muted">
-                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">Reasoning</h4>
-                    <p className="text-xs text-muted-foreground">{bug.explanation}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          ) : (
-            <div className="bg-card border-accent/20 border-2 rounded-2xl p-12 text-center">
-              <div className="bg-accent/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <SparkleIcon className="text-accent h-8 w-8" />
+                <div>
+                  <h4 className="text-sm font-bold flex items-center gap-2 mb-1">
+                    <Zap className="h-3 w-3 text-destructive" />
+                    Problem
+                  </h4>
+                  <p className="text-sm text-muted-foreground">{bug.description}</p>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-sm font-bold text-accent">Suggested Refactor</h4>
+                  <pre className="bg-background border p-3 rounded text-[11px] font-code text-accent overflow-x-auto">
+                    <code>{bug.suggestion}</code>
+                  </pre>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : debugging ? (
+          <EmptyState title="No Static Bugs" description="Heuristic analysis passed with flying colors." />
+        ) : <LoadingPlaceholder label="Scanning for vulnerabilities..." />}
+      </TabsContent>
+
+      <TabsContent value="error-analysis" className="mt-4 animate-in slide-in-from-bottom-2 duration-300">
+        {errorAnalysis ? (
+          <Card className="border-destructive/30 bg-destructive/5">
+            <CardHeader className="pb-2">
+              <div className="flex justify-between items-center mb-2">
+                <Badge className={
+                  errorAnalysis.severity === 'high' ? 'bg-destructive' : 
+                  errorAnalysis.severity === 'medium' ? 'bg-orange-500' : 'bg-yellow-500'
+                }>
+                  Severity: {errorAnalysis.severity.toUpperCase()}
+                </Badge>
               </div>
-              <h3 className="text-xl font-headline font-bold text-foreground">Clean Code Found!</h3>
-              <p className="text-muted-foreground mt-2">The AI couldn't find any critical bugs in this snippet.</p>
-            </div>
-          )}
-        </div>
+              <CardTitle className="text-xl font-headline text-destructive flex items-center gap-2">
+                <ShieldAlert className="h-5 w-5" />
+                Root Cause Analysis
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">The Breakdown</h4>
+                <p className="text-sm text-foreground leading-relaxed">{errorAnalysis.explanation}</p>
+              </div>
+              <div className="bg-background/50 p-4 rounded-lg border border-destructive/10">
+                <h4 className="text-xs font-bold text-destructive uppercase mb-2">Primary Fault</h4>
+                <p className="text-sm font-medium">{errorAnalysis.rootCause}</p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="text-sm font-bold text-accent flex items-center gap-2">
+                  <Zap className="h-4 w-4" />
+                  Step-by-Step Resolution
+                </h4>
+                <p className="text-sm bg-accent/10 p-4 rounded-lg border border-accent/20 text-foreground whitespace-pre-wrap">
+                  {errorAnalysis.solution}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="h-40 flex flex-col items-center justify-center text-center p-8 bg-card/30 border border-dashed rounded-xl">
+            <ShieldAlert className="h-8 w-8 text-muted-foreground/30 mb-2" />
+            <p className="text-sm text-muted-foreground">Provide error logs in the input area to see runtime analysis here.</p>
+          </div>
+        )}
       </TabsContent>
     </Tabs>
   );
 }
 
-function SparkleIcon({ className }: { className?: string }) {
+function LoadingPlaceholder({ label }: { label: string }) {
   return (
-    <svg 
-      className={className} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-    >
-      <path d="M12 3c.132 0 .263 0 .393 0a.75.75 0 0 0 .144-1.486l-.873-.11a.75.75 0 0 1-.658-.658l-.11-.873a.75.75 0 0 0-1.486.144c0 .13-.001.261-.001.393V3h2.591ZM12 21c-.132 0-.263 0-.393 0a.75.75 0 0 0-.144 1.486l.873.11a.75.75 0 0 1 .658.658l.11.873a.75.75 0 0 0 1.486-.144c0-.13.001-.261.001-.393V21H12ZM3 12c0-.132 0-.263 0-.393a.75.75 0 0 0-1.486-.144l-.11.873a.75.75 0 0 1-.658.658l-.873.11a.75.75 0 0 0 .144 1.486c.13 0 .261.001.393.001H3V12ZM21 12c0 .132 0 .263 0 .393a.75.75 0 0 0 1.486.144l.11-.873a.75.75 0 0 1 .658-.658l.873-.11a.75.75 0 0 0-.144-1.486c-.13 0-.261-.001-.393-.001H21V12ZM16.5 7.5l-.884-.884a.75.75 0 0 0-1.06 1.06l.883.884a.75.75 0 0 1 0 1.06l-.883.884a.75.75 0 0 0 1.06 1.06l.884-.884a.75.75 0 0 1 1.06 0l.884.884a.75.75 0 0 0 1.06-1.06l-.884-.884a.75.75 0 0 1 0-1.06l.884-.884a.75.75 0 0 0-1.06-1.06l-.884.884a.75.75 0 0 1-1.06 0ZM7.5 16.5l.884.884a.75.75 0 0 0 1.06-1.06l-.883-.884a.75.75 0 0 1 0-1.06l.883-.884a.75.75 0 0 0-1.06-1.06l-.884.884a.75.75 0 0 1-1.06 0l-.884-.884a.75.75 0 0 0-1.06 1.06l.884.884a.75.75 0 0 1 0 1.06l-.884.884a.75.75 0 0 0 1.06 1.06l.884-.884a.75.75 0 0 1 1.06 0Z" />
-    </svg>
+    <div className="py-12 flex flex-col items-center justify-center gap-4">
+      <div className="h-6 w-6 border-2 border-accent border-t-transparent animate-spin rounded-full" />
+      <p className="text-xs text-muted-foreground font-medium animate-pulse uppercase tracking-widest">{label}</p>
+    </div>
+  );
+}
+
+function EmptyState({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="bg-card border-accent/20 border-2 rounded-2xl p-12 text-center">
+      <ShieldAlert className="text-accent h-12 w-12 mx-auto mb-4 opacity-50" />
+      <h3 className="text-xl font-headline font-bold text-foreground">{title}</h3>
+      <p className="text-muted-foreground mt-2">{description}</p>
+    </div>
   );
 }

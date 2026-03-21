@@ -4,10 +4,11 @@ import { useState } from 'react';
 import { Header } from '@/components/Header';
 import { InputArea } from '@/components/InputArea';
 import { OutputArea } from '@/components/OutputArea';
-import { getProjectOverview, getLineByLineExplanation, getDebugAnalysis } from '@/lib/actions';
+import { getProjectOverview, getLineByLineExplanation, getDebugAnalysis, getErrorAnalysis } from '@/lib/actions';
 import { type AiProjectOverviewOutput } from '@/ai/flows/ai-project-overview';
 import { type CodeExplanationOutput } from '@/ai/flows/ai-line-by-line-explanation';
 import { type DebugCodeOutput } from '@/ai/flows/ai-debugging-assistant-flow';
+import { type ErrorAnalysisOutput } from '@/ai/flows/ai-error-analysis-flow';
 import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
 
@@ -16,40 +17,52 @@ export default function Home() {
   const [overview, setOverview] = useState<AiProjectOverviewOutput | null>(null);
   const [explanations, setExplanations] = useState<CodeExplanationOutput | null>(null);
   const [debugging, setDebugging] = useState<DebugCodeOutput | null>(null);
+  const [errorAnalysis, setErrorAnalysis] = useState<ErrorAnalysisOutput | null>(null);
   const [activeCode, setActiveCode] = useState('');
   const { toast } = useToast();
 
-  const handleAnalyze = async ({ code, language }: { code: string; language: string }) => {
+  const handleAnalyze = async ({ code, language, errorMessage }: { code: string; language: string; errorMessage?: string }) => {
     setIsLoading(true);
     setActiveCode(code);
     
-    // Clear previous results immediately for UI feedback
     setOverview(null);
     setExplanations(null);
     setDebugging(null);
+    setErrorAnalysis(null);
 
     try {
-      // Parallel execution for maximum speed
-      const [ovRes, expRes, debugRes] = await Promise.all([
+      // Use Promise.allSettled for maximum resilience
+      const results = await Promise.allSettled([
         getProjectOverview(code),
         getLineByLineExplanation(code, language),
-        getDebugAnalysis(code, language)
+        getDebugAnalysis(code, language),
+        errorMessage ? getErrorAnalysis(code, errorMessage, language) : Promise.resolve(null)
       ]);
 
-      setOverview(ovRes);
-      setExplanations(expRes);
-      setDebugging(debugRes);
+      if (results[0].status === 'fulfilled') setOverview(results[0].value);
+      if (results[1].status === 'fulfilled') setExplanations(results[1].value);
+      if (results[2].status === 'fulfilled') setDebugging(results[2].value);
+      if (results[3].status === 'fulfilled') setErrorAnalysis(results[3].value);
 
-      toast({
-        title: "Analysis Complete",
-        description: "AI insights generated in parallel.",
-      });
+      const failures = results.filter(r => r.status === 'rejected');
+      if (failures.length > 0) {
+        toast({
+          variant: "destructive",
+          title: "Partial Analysis Failure",
+          description: `Failed to complete ${failures.length} analysis tasks.`,
+        });
+      } else {
+        toast({
+          title: "Analysis Complete",
+          description: "All AI insights generated successfully.",
+        });
+      }
     } catch (error) {
-      console.error("Analysis failed:", error);
+      console.error("Critical Analysis Error:", error);
       toast({
         variant: "destructive",
         title: "System Error",
-        description: "Failed to process analysis. Check API configuration.",
+        description: "Failed to connect to the analysis engine.",
       });
     } finally {
       setIsLoading(false);
@@ -62,28 +75,27 @@ export default function Home() {
       
       <main className="flex-1 container mx-auto px-4 py-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 h-full min-h-[calc(100vh-12rem)]">
-          {/* Left Column: Input */}
           <div className="space-y-6 flex flex-col">
             <div className="space-y-1">
               <h2 className="text-3xl font-headline font-bold text-foreground">Code Input</h2>
-              <p className="text-muted-foreground">Paste your snippet below for instant analysis.</p>
+              <p className="text-muted-foreground">Paste your snippet and optional error logs below.</p>
             </div>
             <div className="flex-1">
               <InputArea onAnalyze={handleAnalyze} isLoading={isLoading} />
             </div>
           </div>
 
-          {/* Right Column: Output */}
           <div className="space-y-6 flex flex-col">
             <div className="space-y-1">
               <h2 className="text-3xl font-headline font-bold text-foreground">AI Insights</h2>
-              <p className="text-muted-foreground">Parallel processing results from Llama 3.1 8B.</p>
+              <p className="text-muted-foreground">Real-time parallel processing via Llama 3.1 8B.</p>
             </div>
             <div className="flex-1 min-h-[400px]">
               <OutputArea 
                 overview={overview} 
                 explanations={explanations} 
                 debugging={debugging} 
+                errorAnalysis={errorAnalysis}
                 code={activeCode}
               />
             </div>
@@ -95,7 +107,8 @@ export default function Home() {
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-muted-foreground uppercase tracking-widest font-medium">
           <p>© 2024 AI Code Intelligence Lab</p>
           <div className="flex gap-8">
-            <span className="cursor-default">Engine: Llama 3.1 8B (Groq)</span>
+            <span className="cursor-default">Resilient Error Handling Enabled</span>
+            <span className="cursor-default">Engine: Groq Llama 3.1</span>
           </div>
         </div>
       </footer>
