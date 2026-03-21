@@ -1,3 +1,4 @@
+
 'use server';
 
 import { groqClient } from '@/lib/groq';
@@ -10,7 +11,7 @@ export type CodeExplanationOutput = {
 };
 
 export async function explainCodeLineByLine(input: { code: string; language?: string }): Promise<CodeExplanationOutput> {
-  // Truncate input to keep it fast
+  // Truncate input to maintain speed
   const truncatedCode = input.code.slice(0, 4000);
 
   const response = await groqClient.chat.completions.create({
@@ -18,11 +19,11 @@ export async function explainCodeLineByLine(input: { code: string; language?: st
     messages: [
       {
         role: 'system',
-        content: 'You are an expert programmer. Explain the code snippet line by line in very short, simple sentences. Return JSON with an "explanations" array of {line, explanation} objects.',
+        content: 'Explain the provided code line by line. Be short and simple. Return JSON with an "explanations" array of {line, explanation} objects.',
       },
       {
         role: 'user',
-        content: `Code (${input.language || 'unknown'}):\n\n${truncatedCode}`,
+        content: `Language: ${input.language || 'generic'}\n\nCode:\n\n${truncatedCode}`,
       },
     ],
     response_format: { type: 'json_object' },

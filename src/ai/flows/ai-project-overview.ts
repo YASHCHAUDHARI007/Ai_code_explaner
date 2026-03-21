@@ -1,3 +1,4 @@
+
 'use server';
 
 import { groqClient } from '@/lib/groq';
@@ -9,7 +10,7 @@ export type AiProjectOverviewOutput = {
 };
 
 export async function aiProjectOverview(input: { code: string }): Promise<AiProjectOverviewOutput> {
-  // Truncate input to keep it fast (~6000 chars)
+  // Truncate input to keep analysis fast (Speed boost)
   const truncatedCode = input.code.slice(0, 6000);
 
   const response = await groqClient.chat.completions.create({
@@ -17,11 +18,11 @@ export async function aiProjectOverview(input: { code: string }): Promise<AiProj
     messages: [
       {
         role: 'system',
-        content: 'You are an expert software architect. Analyze the code and provide a structured summary. Keep descriptions extremely concise. Return JSON with keys: "purpose", "functionality", "coreTechnologies" (array).',
+        content: 'You are an expert software architect. Analyze the code and provide a structured summary. Keep descriptions extremely concise. Return JSON with keys: "purpose", "functionality", "coreTechnologies" (array of strings).',
       },
       {
         role: 'user',
-        content: `Code snippet:\n\n${truncatedCode}`,
+        content: `Code snippet for analysis:\n\n${truncatedCode}`,
       },
     ],
     response_format: { type: 'json_object' },
@@ -31,8 +32,8 @@ export async function aiProjectOverview(input: { code: string }): Promise<AiProj
   try {
     const parsed = JSON.parse(content);
     return {
-      purpose: parsed.purpose || "Not specified",
-      functionality: parsed.functionality || "Not specified",
+      purpose: parsed.purpose || "Generic application purpose",
+      functionality: parsed.functionality || "Standard logic processing",
       coreTechnologies: Array.isArray(parsed.coreTechnologies) ? parsed.coreTechnologies : [],
     };
   } catch (e) {

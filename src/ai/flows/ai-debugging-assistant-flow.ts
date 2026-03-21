@@ -1,3 +1,4 @@
+
 'use server';
 
 import { groqClient } from '@/lib/groq';
@@ -12,7 +13,7 @@ export type DebugCodeOutput = {
 };
 
 export async function debugCode(input: { code: string; language: string }): Promise<DebugCodeOutput> {
-  // Truncate input to keep it fast
+  // Truncate for speed
   const truncatedCode = input.code.slice(0, 5000);
 
   const response = await groqClient.chat.completions.create({
@@ -20,7 +21,7 @@ export async function debugCode(input: { code: string; language: string }): Prom
     messages: [
       {
         role: 'system',
-        content: 'You are an AI debugging assistant. Find bugs (logic/syntax/security) and suggest fixes. Be brief. Return JSON with a "bugs" array of {description, suggestion, explanation, lineNumber}.',
+        content: 'Find bugs and suggest fixes. Be brief. Return JSON with a "bugs" array of {description, suggestion, explanation, lineNumber}.',
       },
       {
         role: 'user',
