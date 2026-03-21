@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Info, ListChecks, Bug, Terminal, ChevronRight } from 'lucide-react';
+import { Info, ListChecks, Bug, Terminal, ChevronRight, Cpu } from 'lucide-react';
 import { type AiProjectOverviewOutput } from '@/ai/flows/ai-project-overview';
 import { type CodeExplanationOutput } from '@/ai/flows/ai-line-by-line-explanation';
 import { type DebugCodeOutput } from '@/ai/flows/ai-debugging-assistant-flow';
@@ -46,16 +46,47 @@ export function OutputArea({ overview, explanations, debugging, code }: OutputAr
       <TabsContent value="overview" className="mt-4 animate-in fade-in duration-500">
         <Card className="border-accent/20 bg-accent/5">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-accent">
+            <CardTitle className="flex items-center gap-2 text-accent text-xl">
               <SparkleIcon className="h-5 w-5" />
-              Project Context
+              Project Architecture
             </CardTitle>
             <CardDescription>Generated high-level summary of the provided code</CardDescription>
           </CardHeader>
-          <CardContent>
-            <p className="text-foreground leading-relaxed font-medium">
-              {overview?.overview || "No overview available."}
-            </p>
+          <CardContent className="space-y-6">
+            {overview ? (
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <h4 className="text-sm font-bold text-accent uppercase tracking-wider">Purpose</h4>
+                  <p className="text-foreground leading-relaxed">{overview.purpose}</p>
+                </div>
+                
+                <div className="space-y-1">
+                  <h4 className="text-sm font-bold text-accent uppercase tracking-wider">Functionality</h4>
+                  <p className="text-foreground leading-relaxed">{overview.functionality}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="text-sm font-bold text-accent uppercase tracking-wider flex items-center gap-2">
+                    <Cpu className="h-4 w-4" />
+                    Core Technologies
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {overview.coreTechnologies.map((tech: string, index: number) => (
+                      <Badge key={index} variant="secondary" className="bg-background border-accent/20 text-accent">
+                        {tech}
+                      </Badge>
+                    ))}
+                    {overview.coreTechnologies.length === 0 && (
+                      <span className="text-sm text-muted-foreground italic">None identified</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="py-8 text-center text-muted-foreground italic">
+                Gathering architectural insights...
+              </div>
+            )}
           </CardContent>
         </Card>
       </TabsContent>

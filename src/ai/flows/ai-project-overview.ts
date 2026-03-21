@@ -3,7 +3,9 @@
 import { groqClient } from '@/lib/groq';
 
 export type AiProjectOverviewOutput = {
-  overview: string;
+  purpose: string;
+  functionality: string;
+  coreTechnologies: string[];
 };
 
 export async function aiProjectOverview(input: { code: string }): Promise<AiProjectOverviewOutput> {
@@ -12,7 +14,7 @@ export async function aiProjectOverview(input: { code: string }): Promise<AiProj
     messages: [
       {
         role: 'system',
-        content: 'You are an expert software architect. Provide a concise, high-level summary of the provided codebase. Focus on its purpose, functionality, and core technologies. Return your response as a JSON object with a single key "overview".',
+        content: 'You are an expert software architect. Analyze the provided codebase and provide a structured summary. Return your response as a JSON object with exactly three keys: "purpose" (string), "functionality" (string), and "coreTechnologies" (an array of strings).',
       },
       {
         role: 'user',
@@ -22,10 +24,19 @@ export async function aiProjectOverview(input: { code: string }): Promise<AiProj
     response_format: { type: 'json_object' },
   });
 
-  const content = response.choices[0]?.message?.content || '{"overview": "No response generated."}';
+  const content = response.choices[0]?.message?.content || '{}';
   try {
-    return JSON.parse(content) as AiProjectOverviewOutput;
+    const parsed = JSON.parse(content);
+    return {
+      purpose: parsed.purpose || "Not specified",
+      functionality: parsed.functionality || "Not specified",
+      coreTechnologies: Array.isArray(parsed.coreTechnologies) ? parsed.coreTechnologies : [],
+    };
   } catch (e) {
-    return { overview: content };
+    return {
+      purpose: "Analysis failed",
+      functionality: "Could not determine functionality",
+      coreTechnologies: [],
+    };
   }
 }
