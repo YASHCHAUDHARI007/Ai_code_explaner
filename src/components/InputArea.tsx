@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FileCode, Github, Upload, Play, Sparkles } from 'lucide-react';
 import { LanguageSelector } from './LanguageSelector';
+import { useToast } from '@/hooks/use-toast';
 
 interface InputAreaProps {
   onAnalyze: (data: { code: string; language: string }) => void;
@@ -17,11 +18,19 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('typescript');
   const [repoUrl, setRepoUrl] = useState('');
+  const { toast } = useToast();
 
   const handleAnalyze = () => {
     if (code.trim()) {
       onAnalyze({ code, language });
     }
+  };
+
+  const handleFeatureNotImplemented = (feature: string) => {
+    toast({
+      title: "Feature Coming Soon",
+      description: `${feature} is currently under development. Please use the "Paste Code" option for now.`,
+    });
   };
 
   return (
@@ -65,7 +74,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
             />
           </div>
           <Button 
-            className="w-full h-12 text-lg font-headline font-bold bg-accent hover:bg-accent/90 text-accent-foreground"
+            className="w-full h-12 text-lg font-headline font-bold bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg"
             onClick={handleAnalyze}
             disabled={isLoading || !code.trim()}
           >
@@ -96,7 +105,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
                   onChange={(e) => setRepoUrl(e.target.value)}
                   className="bg-background"
                 />
-                <Button variant="secondary" onClick={() => alert('This would fetch and parse the repo in a production environment.')}>Fetch</Button>
+                <Button variant="secondary" onClick={() => handleFeatureNotImplemented('GitHub repository fetching')}>Fetch</Button>
               </div>
             </div>
           </div>
@@ -108,7 +117,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
             <div className="space-y-2">
               <h3 className="font-headline font-semibold text-lg">Upload Project ZIP</h3>
               <p className="text-sm text-muted-foreground">Drop your project archive here to analyze all source files together.</p>
-              <Button variant="outline" className="mt-4" onClick={() => alert('ZIP parsing requires a backend utility. In this demo, please use Paste Code.')}>Choose File</Button>
+              <Button variant="outline" className="mt-4" onClick={() => handleFeatureNotImplemented('ZIP archive parsing')}>Choose File</Button>
             </div>
           </div>
         </TabsContent>

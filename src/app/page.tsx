@@ -22,6 +22,11 @@ export default function Home() {
     setIsLoading(true);
     setActiveCode(code);
     
+    // Clear previous results
+    setOverview(null);
+    setExplanations(null);
+    setDebugging(null);
+
     try {
       // Execute analysis flows in parallel
       const [ovRes, expRes, debugRes] = await Promise.all([
@@ -36,14 +41,14 @@ export default function Home() {
 
       toast({
         title: "Analysis Complete",
-        description: "Your code has been successfully processed by AI.",
+        description: "Your code has been successfully processed by our AI engine.",
       });
     } catch (error) {
       console.error("Analysis failed:", error);
       toast({
         variant: "destructive",
         title: "Analysis Failed",
-        description: "There was an error communicating with the AI service. Please try again.",
+        description: "An unexpected error occurred while communicating with the AI service.",
       });
     } finally {
       setIsLoading(false);
@@ -54,13 +59,13 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-background selection:bg-accent/30 selection:text-accent">
       <Header />
       
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full min-h-[calc(100vh-12rem)]">
+      <main className="flex-1 container mx-auto px-4 py-8 max-w-7xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 h-full min-h-[calc(100vh-12rem)]">
           {/* Left Column: Input */}
           <div className="space-y-6 flex flex-col">
             <div className="space-y-1">
-              <h2 className="text-2xl font-headline font-bold text-foreground">Code Input</h2>
-              <p className="text-sm text-muted-foreground">Provide source code for instant AI-driven insights.</p>
+              <h2 className="text-3xl font-headline font-bold text-foreground">Code Input</h2>
+              <p className="text-muted-foreground">Provide source code for instant AI-driven architectural and semantic insights.</p>
             </div>
             <div className="flex-1">
               <InputArea onAnalyze={handleAnalyze} isLoading={isLoading} />
@@ -70,8 +75,8 @@ export default function Home() {
           {/* Right Column: Output */}
           <div className="space-y-6 flex flex-col">
             <div className="space-y-1">
-              <h2 className="text-2xl font-headline font-bold text-foreground">Analysis Results</h2>
-              <p className="text-sm text-muted-foreground">Detailed breakdown, debugging, and overview.</p>
+              <h2 className="text-3xl font-headline font-bold text-foreground">Insights</h2>
+              <p className="text-muted-foreground">Detailed breakdown, debugging analysis, and high-level project summary.</p>
             </div>
             <div className="flex-1 min-h-[400px]">
               <OutputArea 
@@ -85,13 +90,13 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="border-t bg-card py-6">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground uppercase tracking-widest">
+      <footer className="border-t bg-card py-8 mt-12">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-muted-foreground uppercase tracking-widest font-medium">
           <p>© 2024 AI Codebase Explainer & Debugger</p>
-          <div className="flex gap-6">
+          <div className="flex gap-8">
             <a href="#" className="hover:text-accent transition-colors">Documentation</a>
-            <a href="#" className="hover:text-accent transition-colors">Privacy</a>
-            <a href="#" className="hover:text-accent transition-colors">Contact</a>
+            <a href="#" className="hover:text-accent transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-accent transition-colors">Terms of Service</a>
           </div>
         </div>
       </footer>
