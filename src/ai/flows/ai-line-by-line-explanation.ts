@@ -15,7 +15,7 @@ export async function explainCodeLineByLine(input: { code: string; language?: st
     messages: [
       {
         role: 'system',
-        content: 'You are an expert programmer. Explain the provided code snippet line by line in simple language. Return your response as a JSON object with an "explanations" array containing objects with "line" and "explanation" keys.',
+        content: 'You are an expert programmer. Explain the provided code snippet line by line in simple language. Return your response as a JSON object with an "explanations" array containing objects with "line" and "explanation" keys. Ensure every significant line of code has an explanation.',
       },
       {
         role: 'user',

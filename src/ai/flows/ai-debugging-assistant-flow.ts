@@ -17,7 +17,7 @@ export async function debugCode(input: { code: string; language: string }): Prom
     messages: [
       {
         role: 'system',
-        content: 'You are an expert AI debugging assistant. Analyze the provided source code, identify potential bugs, suggest fixes, and provide clear explanations. Return your response as a JSON object with a "bugs" array.',
+        content: 'You are an expert AI debugging assistant. Analyze the provided source code, identify potential bugs (logic, syntax, or security), suggest fixes, and provide clear explanations. Return your response as a JSON object with a "bugs" array.',
       },
       {
         role: 'user',
