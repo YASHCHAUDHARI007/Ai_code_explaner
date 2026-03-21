@@ -1,53 +1,36 @@
 'use server';
-/**
- * @fileOverview An AI debugging assistant that helps identify potential bugs and suggests fixes in code.
- */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { groqClient } from '@/lib/groq';
 
-const DebugCodeInputSchema = z.object({
-  code: z.string().describe('The source code to debug.'),
-  language: z.string().describe('The programming language of the source code.'),
-});
-export type DebugCodeInput = z.infer<typeof DebugCodeInputSchema>;
+export type DebugCodeOutput = {
+  bugs: Array<{
+    description: string;
+    suggestion: string;
+    explanation: string;
+    lineNumber?: number;
+  }>;
+};
 
-const DebugCodeOutputSchema = z.object({
-  bugs: z.array(z.object({
-    description: z.string().describe('A clear description of the potential bug.'),
-    suggestion: z.string().describe('A suggested fix for the identified bug.'),
-    explanation: z.string().describe('An explanation of why this is a bug.'),
-    lineNumber: z.number().optional().describe('The approximate line number.'),
-  })).describe('A list of identified bugs.'),
-});
-export type DebugCodeOutput = z.infer<typeof DebugCodeOutputSchema>;
+export async function debugCode(input: { code: string; language: string }): Promise<DebugCodeOutput> {
+  const response = await groqClient.chat.completions.create({
+    model: 'llama-3.1-8b-instant',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are an expert AI debugging assistant. Analyze the provided source code, identify potential bugs, suggest fixes, and provide clear explanations. Return your response as a JSON object with a "bugs" array.',
+      },
+      {
+        role: 'user',
+        content: `Language: ${input.language}\n\nCode:\n\n${input.code}`,
+      },
+    ],
+    response_format: { type: 'json_object' },
+  });
 
-export async function debugCode(input: DebugCodeInput): Promise<DebugCodeOutput> {
-  return debugCodeFlow(input);
-}
-
-const prompt = ai.definePrompt({
-  name: 'debugCodePrompt',
-  input: {schema: DebugCodeInputSchema},
-  output: {schema: DebugCodeOutputSchema},
-  prompt: `You are an expert AI debugging assistant. Analyze the provided {{{language}}} source code, identify potential bugs, suggest fixes, and provide clear explanations.
-
-Focus on common errors, logical flaws, syntax issues, and runtime problems. If no obvious bugs are found, return an empty list.
-
-Code to analyze:
-\x60\x60\x60{{{language}}}
-{{{code}}}
-\x60\x60\x60`,
-});
-
-const debugCodeFlow = ai.defineFlow(
-  {
-    name: 'aiDebuggingAssistantFlow',
-    inputSchema: DebugCodeInputSchema,
-    outputSchema: DebugCodeOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  const content = response.choices[0]?.message?.content || '{"bugs": []}';
+  try {
+    return JSON.parse(content) as DebugCodeOutput;
+  } catch (e) {
+    return { bugs: [] };
   }
-);
+}
