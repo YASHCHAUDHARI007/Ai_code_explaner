@@ -12,16 +12,19 @@ export type DebugCodeOutput = {
 };
 
 export async function debugCode(input: { code: string; language: string }): Promise<DebugCodeOutput> {
+  // Truncate input to keep it fast
+  const truncatedCode = input.code.slice(0, 5000);
+
   const response = await groqClient.chat.completions.create({
     model: 'llama-3.1-8b-instant',
     messages: [
       {
         role: 'system',
-        content: 'You are an expert AI debugging assistant. Analyze the provided source code, identify potential bugs (logic, syntax, or security), suggest fixes, and provide clear explanations. Return your response as a JSON object with a "bugs" array.',
+        content: 'You are an AI debugging assistant. Find bugs (logic/syntax/security) and suggest fixes. Be brief. Return JSON with a "bugs" array of {description, suggestion, explanation, lineNumber}.',
       },
       {
         role: 'user',
-        content: `Language: ${input.language}\n\nCode:\n\n${input.code}`,
+        content: `Language: ${input.language}\n\nCode:\n\n${truncatedCode}`,
       },
     ],
     response_format: { type: 'json_object' },

@@ -23,13 +23,13 @@ export default function Home() {
     setIsLoading(true);
     setActiveCode(code);
     
-    // Clear previous results
+    // Clear previous results immediately for UI feedback
     setOverview(null);
     setExplanations(null);
     setDebugging(null);
 
     try {
-      // Execute analysis flows in parallel
+      // Parallel execution for maximum speed
       const [ovRes, expRes, debugRes] = await Promise.all([
         getProjectOverview(code),
         getLineByLineExplanation(code, language),
@@ -41,15 +41,15 @@ export default function Home() {
       setDebugging(debugRes);
 
       toast({
-        title: "Analysis Successful",
-        description: "AI insights have been generated for your snippet.",
+        title: "Analysis Complete",
+        description: "AI insights generated in parallel.",
       });
     } catch (error) {
       console.error("Analysis failed:", error);
       toast({
         variant: "destructive",
         title: "System Error",
-        description: "The AI engine encountered an issue processing your request.",
+        description: "Failed to process analysis. Check API configuration.",
       });
     } finally {
       setIsLoading(false);
@@ -66,7 +66,7 @@ export default function Home() {
           <div className="space-y-6 flex flex-col">
             <div className="space-y-1">
               <h2 className="text-3xl font-headline font-bold text-foreground">Code Input</h2>
-              <p className="text-muted-foreground">Paste your snippet below for structural and logic analysis.</p>
+              <p className="text-muted-foreground">Paste your snippet below for instant analysis.</p>
             </div>
             <div className="flex-1">
               <InputArea onAnalyze={handleAnalyze} isLoading={isLoading} />
@@ -77,7 +77,7 @@ export default function Home() {
           <div className="space-y-6 flex flex-col">
             <div className="space-y-1">
               <h2 className="text-3xl font-headline font-bold text-foreground">AI Insights</h2>
-              <p className="text-muted-foreground">Architectural overview, detailed breakdown, and security analysis.</p>
+              <p className="text-muted-foreground">Parallel processing results from Llama 3.1 8B.</p>
             </div>
             <div className="flex-1 min-h-[400px]">
               <OutputArea 
@@ -95,7 +95,7 @@ export default function Home() {
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-muted-foreground uppercase tracking-widest font-medium">
           <p>© 2024 AI Code Intelligence Lab</p>
           <div className="flex gap-8">
-            <span className="cursor-default">Version 1.0.0 Stable</span>
+            <span className="cursor-default">Engine: Llama 3.1 8B (Groq)</span>
           </div>
         </div>
       </footer>
