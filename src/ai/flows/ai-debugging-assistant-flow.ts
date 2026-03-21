@@ -30,15 +30,14 @@ const prompt = ai.definePrompt({
   name: 'debugCodePrompt',
   input: {schema: DebugCodeInputSchema},
   output: {schema: DebugCodeOutputSchema},
-  prompt: `You are an expert AI debugging assistant. Your task is to analyze the provided {{{language}}} source code, identify potential bugs, suggest fixes, and provide clear explanations for each.
+  prompt: `You are an expert AI debugging assistant. Analyze the provided {{{language}}} source code, identify potential bugs, suggest fixes, and provide clear explanations.
 
-Focus on common errors, logical flaws, syntax issues, and potential runtime problems. If no obvious bugs are found, return an empty list of bugs.
+Focus on common errors, logical flaws, syntax issues, and runtime problems. If no obvious bugs are found, return an empty list.
 
 Code to analyze:
 \x60\x60\x60{{{language}}}
 {{{code}}}
-\x60\x60\x60
-`,
+\x60\x60\x60`,
 });
 
 const debugCodeFlow = ai.defineFlow(

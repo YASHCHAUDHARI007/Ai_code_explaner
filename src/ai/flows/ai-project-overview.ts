@@ -1,17 +1,13 @@
 'use server';
 /**
  * @fileOverview A Genkit flow for generating a high-level overview of a codebase.
- *
- * - aiProjectOverview - A function that generates a codebase overview.
- * - AiProjectOverviewInput - The input type for the aiProjectOverview function.
- * - AiProjectOverviewOutput - The return type for the aiProjectOverview function.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
 const AiProjectOverviewInputSchema = z.object({
-  code: z.string().describe('The entire codebase or a significant portion of it, provided as a single string, or a description of the project structure and key files.'),
+  code: z.string().describe('The entire codebase or a significant portion of it.'),
 });
 export type AiProjectOverviewInput = z.infer<typeof AiProjectOverviewInputSchema>;
 
@@ -28,7 +24,7 @@ const prompt = ai.definePrompt({
   name: 'aiProjectOverviewPrompt',
   input: { schema: AiProjectOverviewInputSchema },
   output: { schema: AiProjectOverviewOutputSchema },
-  prompt: `You are an expert software architect. Your task is to provide a concise, high-level summary of the provided codebase. Focus on its overall purpose, main functionalities, and core technologies used.
+  prompt: `You are an expert software architect. Provide a concise, high-level summary of the provided codebase. Focus on its purpose, functionality, and core technologies.
 
 Codebase:
 \x60\x60\x60
