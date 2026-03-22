@@ -9,16 +9,20 @@ export type AiProjectOverviewOutput = {
   coreTechnologies: string[];
 };
 
-export async function aiProjectOverview(input: { code: string }): Promise<AiProjectOverviewOutput> {
-  // Truncate input to keep analysis fast (Speed boost)
+export async function aiProjectOverview(input: { code: string; mode?: 'beginner' | 'developer' }): Promise<AiProjectOverviewOutput> {
   const truncatedCode = input.code.slice(0, 6000);
+  const mode = input.mode || 'developer';
+
+  const systemPrompt = mode === 'beginner' 
+    ? 'You are a friendly teacher. Analyze the code and provide a structured summary using simple terms and analogies. Avoid heavy jargon. Return JSON with keys: "purpose", "functionality", "coreTechnologies" (array of strings).'
+    : 'You are an expert software architect. Analyze the code and provide a structured summary focusing on design patterns, architectural decisions, and system flow. Return JSON with keys: "purpose", "functionality", "coreTechnologies" (array of strings).';
 
   const response = await groqClient.chat.completions.create({
     model: 'llama-3.1-8b-instant',
     messages: [
       {
         role: 'system',
-        content: 'You are an expert software architect. Analyze the code and provide a structured summary. Keep descriptions extremely concise. Return JSON with keys: "purpose", "functionality", "coreTechnologies" (array of strings).',
+        content: systemPrompt,
       },
       {
         role: 'user',
@@ -32,8 +36,8 @@ export async function aiProjectOverview(input: { code: string }): Promise<AiProj
   try {
     const parsed = JSON.parse(content);
     return {
-      purpose: parsed.purpose || "Generic application purpose",
-      functionality: parsed.functionality || "Standard logic processing",
+      purpose: parsed.purpose || "Analysis pending",
+      functionality: parsed.functionality || "Analysis pending",
       coreTechnologies: Array.isArray(parsed.coreTechnologies) ? parsed.coreTechnologies : [],
     };
   } catch (e) {

@@ -5,22 +5,24 @@ import { useState, useRef } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Play, Sparkles, AlertCircle, Github, FileUp, Clipboard, Loader2 } from 'lucide-react';
+import { Play, Sparkles, AlertCircle, Github, FileUp, Clipboard, Loader2, User, Terminal } from 'lucide-react';
 import { LanguageSelector } from './LanguageSelector';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { fetchGitHubRepo } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 import JSZip from 'jszip';
 
 interface InputAreaProps {
-  onAnalyze: (data: { code: string; language: string; errorMessage?: string }) => void;
+  onAnalyze: (data: { code: string; language: string; mode: 'beginner' | 'developer'; errorMessage?: string }) => void;
   isLoading: boolean;
 }
 
 export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('auto');
+  const [mode, setMode] = useState<'beginner' | 'developer'>('developer');
   const [errorMessage, setErrorMessage] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [isFetchingGithub, setIsFetchingGithub] = useState(false);
@@ -29,7 +31,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
 
   const handleAnalyze = () => {
     if (code.trim()) {
-      onAnalyze({ code, language, errorMessage: errorMessage.trim() || undefined });
+      onAnalyze({ code, language, mode, errorMessage: errorMessage.trim() || undefined });
     }
   };
 
@@ -61,7 +63,6 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
         let extractedText = '';
         let fileCount = 0;
         
-        // Extract first 5 text/code files
         for (const [filename, fileData] of Object.entries(content.files)) {
           if (!fileData.dir && fileCount < 5 && !filename.includes('node_modules')) {
             const text = await fileData.async('string');
@@ -92,11 +93,36 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
             <Sparkles className="text-accent h-5 w-5" />
           </div>
           <div>
-            <h2 className="font-headline font-semibold">Input Mode</h2>
-            <p className="text-xs text-muted-foreground">Choose how to provide code</p>
+            <h2 className="font-headline font-semibold">Workspace Settings</h2>
+            <p className="text-xs text-muted-foreground">Configure your analysis engine</p>
           </div>
         </div>
-        <LanguageSelector value={language} onChange={setLanguage} />
+        
+        <div className="flex items-center gap-4">
+          <div className="flex bg-secondary p-1 rounded-lg border border-border/50">
+            <button
+              onClick={() => setMode('beginner')}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-md transition-all",
+                mode === 'beginner' ? "bg-background text-accent shadow-sm" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <User className="h-3 w-3" />
+              Beginner
+            </button>
+            <button
+              onClick={() => setMode('developer')}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-md transition-all",
+                mode === 'developer' ? "bg-background text-accent shadow-sm" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Terminal className="h-3 w-3" />
+              Developer
+            </button>
+          </div>
+          <LanguageSelector value={language} onChange={setLanguage} />
+        </div>
       </div>
 
       <Tabs defaultValue="paste" className="w-full">
@@ -198,7 +224,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
         {isLoading ? (
           <div className="flex items-center gap-2">
             <Loader2 className="h-5 w-5 animate-spin" />
-            Parallel AI Processing...
+            AI Processing in {mode.charAt(0).toUpperCase() + mode.slice(1)} Mode...
           </div>
         ) : (
           <div className="flex items-center gap-2">

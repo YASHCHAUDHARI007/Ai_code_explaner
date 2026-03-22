@@ -1,3 +1,4 @@
+
 'use server';
 
 import { aiProjectOverview, type AiProjectOverviewOutput } from '@/ai/flows/ai-project-overview';
@@ -7,16 +8,16 @@ import { analyzeRuntimeError, type ErrorAnalysisOutput } from '@/ai/flows/ai-err
 import { detectLanguage, type LanguageDetectionOutput } from '@/ai/flows/ai-language-detection-flow';
 import { askCodeQuestion, type ChatOutput } from '@/ai/flows/ai-chat-flow';
 
-export async function getProjectOverview(code: string): Promise<AiProjectOverviewOutput> {
-  return await aiProjectOverview({ code });
+export async function getProjectOverview(code: string, mode?: 'beginner' | 'developer'): Promise<AiProjectOverviewOutput> {
+  return await aiProjectOverview({ code, mode });
 }
 
-export async function getLineByLineExplanation(code: string, language?: string): Promise<CodeExplanationOutput> {
-  return await explainCodeLineByLine({ code, language });
+export async function getLineByLineExplanation(code: string, language?: string, mode?: 'beginner' | 'developer'): Promise<CodeExplanationOutput> {
+  return await explainCodeLineByLine({ code, language, mode });
 }
 
-export async function getDebugAnalysis(code: string, language: string): Promise<DebugCodeOutput> {
-  return await debugCode({ code, language });
+export async function getDebugAnalysis(code: string, language: string, mode?: 'beginner' | 'developer'): Promise<DebugCodeOutput> {
+  return await debugCode({ code, language, mode });
 }
 
 export async function getErrorAnalysis(code: string, errorMessage: string, language: string): Promise<ErrorAnalysisOutput> {
@@ -32,11 +33,10 @@ export async function getAiAnswer(code: string, question: string, language?: str
 }
 
 /**
- * Basic GitHub fetcher (Server-side to avoid CORS issues if any)
+ * Basic GitHub fetcher
  */
 export async function fetchGitHubRepo(url: string): Promise<string> {
   try {
-    // Parse github.com/owner/repo
     const parts = url.replace('https://github.com/', '').split('/');
     if (parts.length < 2) throw new Error('Invalid GitHub URL');
     
@@ -49,7 +49,6 @@ export async function fetchGitHubRepo(url: string): Promise<string> {
     const contents = await res.json();
     if (!Array.isArray(contents)) throw new Error('Repository is empty or invalid');
 
-    // Fetch first 5 code files to form a "context"
     const codeFiles = contents.filter(f => f.type === 'file' && /\.(ts|tsx|js|jsx|py|java|c|cpp|go|rb|php)$/.test(f.name)).slice(0, 5);
     
     let combinedCode = '';

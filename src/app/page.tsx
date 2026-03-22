@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -21,7 +22,7 @@ export default function Home() {
   const [activeCode, setActiveCode] = useState('');
   const { toast } = useToast();
 
-  const handleAnalyze = async ({ code, language, errorMessage }: { code: string; language: string; errorMessage?: string }) => {
+  const handleAnalyze = async ({ code, language, mode, errorMessage }: { code: string; language: string; mode: 'beginner' | 'developer'; errorMessage?: string }) => {
     setIsLoading(true);
     setActiveCode(code);
     
@@ -33,7 +34,6 @@ export default function Home() {
     try {
       let finalLanguage = language;
       
-      // Auto-detect language if requested
       if (language === 'auto') {
         const detection = await getDetectedLanguage(code);
         finalLanguage = detection.language;
@@ -43,11 +43,10 @@ export default function Home() {
         });
       }
 
-      // Use Promise.allSettled for maximum resilience
       const results = await Promise.allSettled([
-        getProjectOverview(code),
-        getLineByLineExplanation(code, finalLanguage),
-        getDebugAnalysis(code, finalLanguage),
+        getProjectOverview(code, mode),
+        getLineByLineExplanation(code, finalLanguage, mode),
+        getDebugAnalysis(code, finalLanguage, mode),
         errorMessage ? getErrorAnalysis(code, errorMessage, finalLanguage) : Promise.resolve(null)
       ]);
 
@@ -66,7 +65,7 @@ export default function Home() {
       } else {
         toast({
           title: "Analysis Complete",
-          description: "All AI insights generated successfully.",
+          description: `Insights generated for ${mode} level.`,
         });
       }
     } catch (error) {

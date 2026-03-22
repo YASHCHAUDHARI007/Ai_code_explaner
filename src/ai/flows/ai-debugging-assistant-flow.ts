@@ -12,16 +12,20 @@ export type DebugCodeOutput = {
   }>;
 };
 
-export async function debugCode(input: { code: string; language: string }): Promise<DebugCodeOutput> {
-  // Truncate for speed
+export async function debugCode(input: { code: string; language: string; mode?: 'beginner' | 'developer' }): Promise<DebugCodeOutput> {
   const truncatedCode = input.code.slice(0, 5000);
+  const mode = input.mode || 'developer';
+
+  const systemPrompt = mode === 'beginner'
+    ? 'Find bugs in the code and explain them simply for a beginner. Suggest easy-to-understand fixes. Return JSON with a "bugs" array of {description, suggestion, explanation, lineNumber}.'
+    : 'Perform deep static analysis to find subtle bugs, performance bottlenecks, and security vulnerabilities. Suggest professional-grade fixes. Return JSON with a "bugs" array of {description, suggestion, explanation, lineNumber}.';
 
   const response = await groqClient.chat.completions.create({
     model: 'llama-3.1-8b-instant',
     messages: [
       {
         role: 'system',
-        content: 'Find bugs and suggest fixes. Be brief. Return JSON with a "bugs" array of {description, suggestion, explanation, lineNumber}.',
+        content: systemPrompt,
       },
       {
         role: 'user',
