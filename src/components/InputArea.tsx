@@ -19,6 +19,12 @@ interface InputAreaProps {
   isLoading: boolean;
 }
 
+const MAX_ZIP_SIZE = 15 * 1024 * 1024; // 15MB limit for the ZIP file
+const MAX_TOTAL_CHARS = 50000; // Cap total text context to prevent AI timeouts
+const IGNORED_DIRS = ['node_modules', '.git', 'dist', 'build', 'venv', '__pycache__', 'images', 'videos', 'bin', 'obj', '.next', 'out', 'target'];
+const SUPPORTED_EXTENSIONS = ['.py', '.java', '.js', '.ts', '.tsx', '.jsx', '.c', '.cpp', '.h', '.hpp', '.html', '.css', '.json', '.md', '.go', '.rs', '.php'];
+const PRIORITY_FILES = ['README.md', 'package.json', 'requirements.txt', 'main.py', 'app.py', 'index.js', 'server.js', 'tsconfig.json', 'Cargo.toml', 'pom.xml', 'build.gradle'];
+
 export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('auto');
@@ -26,6 +32,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
   const [errorMessage, setErrorMessage] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [isFetchingGithub, setIsFetchingGithub] = useState(false);
+  const [zipProcessingStatus, setZipProcessingStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -56,24 +63,72 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (file.size > MAX_ZIP_SIZE) {
+      toast({ 
+        variant: 'destructive', 
+        title: 'File Too Large', 
+        description: `ZIP files are limited to ${MAX_ZIP_SIZE / (1024 * 1024)}MB. Please upload a smaller archive.` 
+      });
+      return;
+    }
+
     if (file.name.endsWith('.zip')) {
+      setZipProcessingStatus('Reading ZIP structure...');
       const zip = new JSZip();
       try {
-        const content = await zip.loadAsync(file);
+        const zipContent = await zip.loadAsync(file);
         let extractedText = '';
+        let totalChars = 0;
         let fileCount = 0;
         
-        for (const [filename, fileData] of Object.entries(content.files)) {
-          if (!fileData.dir && fileCount < 5 && !filename.includes('node_modules')) {
-            const text = await fileData.async('string');
-            extractedText += `// File: ${filename}\n${text}\n\n`;
-            fileCount++;
+        // Filter and categorize files
+        const filesToProcess: { name: string; file: JSZip.JSZipObject; priority: boolean }[] = [];
+        
+        for (const [filename, fileData] of Object.entries(zipContent.files)) {
+          if (fileData.dir) continue;
+          
+          const pathParts = filename.split('/');
+          const isIgnored = pathParts.some(part => IGNORED_DIRS.includes(part));
+          const ext = filename.substring(filename.lastIndexOf('.')).toLowerCase();
+          const isSupported = SUPPORTED_EXTENSIONS.includes(ext);
+          
+          if (!isIgnored && isSupported) {
+            const baseName = pathParts[pathParts.length - 1];
+            filesToProcess.push({
+              name: filename,
+              file: fileData,
+              priority: PRIORITY_FILES.includes(baseName)
+            });
           }
         }
+
+        // Sort: Priority files first, then the rest
+        filesToProcess.sort((a, b) => (a.priority === b.priority ? 0 : a.priority ? -1 : 1));
+
+        setZipProcessingStatus(`Extracting ${filesToProcess.length} valid source files...`);
+
+        for (const entry of filesToProcess) {
+          if (totalChars >= MAX_TOTAL_CHARS) break;
+
+          const text = await entry.file.async('string');
+          const remainingLimit = MAX_TOTAL_CHARS - totalChars;
+          const textToAppend = text.length > remainingLimit ? text.substring(0, remainingLimit) + '\n... [File Truncated due to size limit]' : text;
+          
+          extractedText += `// --- File: ${entry.name} ---\n${textToAppend}\n\n`;
+          totalChars += textToAppend.length;
+          fileCount++;
+        }
+
         setCode(extractedText);
-        toast({ title: 'ZIP Extracted', description: `Loaded content from ${fileCount} files.` });
+        setZipProcessingStatus(null);
+        
+        toast({ 
+          title: 'ZIP Processed Successfully', 
+          description: `Extracted content from ${fileCount} files. (Total context: ${Math.round(totalChars / 1024)}KB)` 
+        });
       } catch (err) {
-        toast({ variant: 'destructive', title: 'Extraction Failed', description: 'Could not process ZIP file.' });
+        setZipProcessingStatus(null);
+        toast({ variant: 'destructive', title: 'Extraction Failed', description: 'Could not process ZIP file. Ensure it is not corrupted.' });
       }
     } else {
       const reader = new FileReader();
@@ -156,16 +211,34 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
         </TabsContent>
 
         <TabsContent value="file">
-          <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed rounded-xl bg-card/30 hover:bg-card/50 transition-colors cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-            <FileUp className="h-12 w-12 text-muted-foreground/50 mb-4" />
-            <h3 className="font-headline font-bold">Click to Upload</h3>
-            <p className="text-sm text-muted-foreground text-center mt-2">Support for .zip, .txt, .ts, .js, .py, .java, etc.</p>
+          <div 
+            className={cn(
+              "flex flex-col items-center justify-center p-12 border-2 border-dashed rounded-xl bg-card/30 hover:bg-card/50 transition-colors cursor-pointer",
+              zipProcessingStatus && "pointer-events-none opacity-80"
+            )} 
+            onClick={() => !zipProcessingStatus && fileInputRef.current?.click()}
+          >
+            {zipProcessingStatus ? (
+              <div className="flex flex-col items-center gap-4">
+                <Loader2 className="h-12 w-12 text-accent animate-spin" />
+                <p className="text-sm font-medium text-accent">{zipProcessingStatus}</p>
+              </div>
+            ) : (
+              <>
+                <FileUp className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                <h3 className="font-headline font-bold">Click to Upload</h3>
+                <p className="text-sm text-muted-foreground text-center mt-2 max-w-xs">
+                  Upload a ZIP of your project. node_modules and binary files will be ignored.
+                </p>
+                <p className="text-[10px] text-muted-foreground mt-2 font-code">Max Size: 15MB</p>
+              </>
+            )}
             <input 
               type="file" 
               ref={fileInputRef} 
               className="hidden" 
               onChange={handleFileUpload}
-              accept=".zip,.txt,.ts,.tsx,.js,.jsx,.py,.java,.c,.cpp"
+              accept=".zip,.txt,.ts,.tsx,.js,.jsx,.py,.java,.c,.cpp,.go,.rs,.php"
             />
           </div>
         </TabsContent>
@@ -191,7 +264,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
               </div>
             </div>
             <p className="text-xs text-muted-foreground italic">
-              Note: This will fetch a few sample files from the repository root to provide context for analysis.
+              Note: This will fetch sample files from the repository root to provide context.
             </p>
           </div>
         </TabsContent>
@@ -219,7 +292,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
       <Button 
         className="w-full h-12 text-lg font-headline font-bold bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg transition-all active:scale-[0.98]"
         onClick={handleAnalyze}
-        disabled={isLoading || !code.trim()}
+        disabled={isLoading || !code.trim() || !!zipProcessingStatus}
       >
         {isLoading ? (
           <div className="flex items-center gap-2">
