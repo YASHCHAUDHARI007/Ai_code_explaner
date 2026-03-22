@@ -58,7 +58,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
       <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-card/50 border-2 border-dashed rounded-2xl">
         <Terminal className="h-16 w-16 text-muted-foreground/30 mb-4" />
         <h3 className="text-xl font-headline font-bold text-muted-foreground/70">Awaiting Input</h3>
-        <p className="text-muted-foreground max-w-sm mt-2">Paste some code and click "Start Analysis" to see results here.</p>
+        <p className="text-muted-foreground max-w-sm mt-2">Paste some code and click "Analyze Codebase" to see results here.</p>
       </div>
     );
   }
@@ -76,7 +76,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
         </TabsTrigger>
         <TabsTrigger value="debugging" className="flex-1 flex items-center gap-2 data-[state=active]:bg-background">
           <Bug className="h-4 w-4" />
-          <span>Static Bugs</span>
+          <span>Bugs</span>
         </TabsTrigger>
         <TabsTrigger value="chat" className="flex-1 flex items-center gap-2 data-[state=active]:bg-background">
           <MessageSquare className="h-4 w-4" />
@@ -84,7 +84,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
         </TabsTrigger>
         <TabsTrigger value="error-analysis" className="flex-1 flex items-center gap-2 data-[state=active]:bg-background">
           <ShieldAlert className="h-4 w-4 text-destructive" />
-          <span>Runtime Fix</span>
+          <span>Troubleshoot</span>
         </TabsTrigger>
       </TabsList>
 
@@ -151,7 +151,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
             <Card key={idx} className="border-destructive/20 bg-destructive/5">
               <CardContent className="p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <Badge variant="destructive" className="font-headline tracking-tighter uppercase text-[10px]">Security / Logic Issue</Badge>
+                  <Badge variant="destructive" className="font-headline tracking-tighter uppercase text-[10px]">Logic Issue</Badge>
                   {bug.lineNumber && <span className="text-[10px] text-muted-foreground font-code">L:{bug.lineNumber}</span>}
                 </div>
                 <div>
