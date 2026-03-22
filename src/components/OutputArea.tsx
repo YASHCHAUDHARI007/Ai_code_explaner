@@ -21,7 +21,10 @@ import {
   Layers,
   Search,
   CheckCircle2,
-  FileCode
+  FileCode,
+  MapPin,
+  Activity,
+  FileJson
 } from 'lucide-react';
 import { type AiProjectOverviewOutput } from '@/ai/flows/ai-project-overview';
 import { type CodeExplanationOutput } from '@/ai/flows/ai-line-by-line-explanation';
@@ -61,32 +64,33 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
     return (
       <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-card/50 border-2 border-dashed rounded-2xl">
         <Terminal className="h-16 w-16 text-muted-foreground/30 mb-4" />
-        <h3 className="text-xl font-headline font-bold text-muted-foreground/70">Awaiting Input</h3>
-        <p className="text-muted-foreground max-w-sm mt-2">Provide code in the Source area and click "Analyze Codebase" to begin.</p>
+        <h3 className="text-xl font-headline font-bold text-muted-foreground/70">Awaiting Code Source</h3>
+        <p className="text-muted-foreground max-w-sm mt-2">Neuralyze will analyze project structure, detect frameworks, and map execution flows.</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Project Summary Widgets */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      {/* High-Level Metrics Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="bg-card/50 border-border/50">
           <CardContent className="p-4 flex flex-col gap-1">
             <div className="flex items-center gap-2 text-muted-foreground mb-1">
               <Layers className="h-3.5 w-3.5" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Tech Stack</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider">Project Type</span>
             </div>
-            <div className="flex flex-wrap gap-1">
-              {overview?.coreTechnologies.slice(0, 3).map((tech, i) => (
-                <Badge key={i} variant="secondary" className="text-[9px] px-1.5 py-0 bg-accent/10 text-accent border-none">
-                  {tech}
-                </Badge>
-              )) || <span className="text-xs text-muted-foreground">Detecting...</span>}
-              {overview && overview.coreTechnologies.length > 3 && (
-                <span className="text-[9px] text-muted-foreground">+{overview.coreTechnologies.length - 3} more</span>
-              )}
+            <span className="text-sm font-bold text-accent truncate">{overview?.projectType || "Detecting..."}</span>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-card/50 border-border/50">
+          <CardContent className="p-4 flex flex-col gap-1">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <MapPin className="h-3.5 w-3.5" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">Entry Point</span>
             </div>
+            <span className="text-[11px] font-code font-medium text-foreground truncate">{overview?.entryPoint || "Locating..."}</span>
           </CardContent>
         </Card>
 
@@ -94,7 +98,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
           <CardContent className="p-4 flex flex-col gap-1">
             <div className="flex items-center gap-2 text-muted-foreground mb-1">
               <Bug className="h-3.5 w-3.5" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Issues Found</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider">Potential Bugs</span>
             </div>
             <span className="text-lg font-headline font-bold text-foreground">
               {debugging ? debugging.bugs.length : "..."}
@@ -118,12 +122,16 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="flex w-full bg-secondary h-11 overflow-x-auto">
           <TabsTrigger value="overview" className="flex-1 flex items-center gap-2 data-[state=active]:bg-background">
-            <Info className="h-4 w-4" />
+            <Search className="h-4 w-4" />
             <span>Overview</span>
+          </TabsTrigger>
+          <TabsTrigger value="flow" className="flex-1 flex items-center gap-2 data-[state=active]:bg-background">
+            <Activity className="h-4 w-4" />
+            <span>Working Flow</span>
           </TabsTrigger>
           <TabsTrigger value="explanations" className="flex-1 flex items-center gap-2 data-[state=active]:bg-background">
             <ListChecks className="h-4 w-4" />
-            <span>Logic</span>
+            <span>File Logic</span>
           </TabsTrigger>
           <TabsTrigger value="debugging" className="flex-1 flex items-center gap-2 data-[state=active]:bg-background">
             <Bug className="h-4 w-4" />
@@ -137,26 +145,43 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
 
         <TabsContent value="overview" className="mt-4 animate-in slide-in-from-bottom-2 duration-300">
           <Card className="border-accent/20 bg-accent/5">
-            <CardHeader>
+            <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-accent text-xl font-headline">
                 <Cpu className="h-5 w-5" />
-                Architecture Insights
+                Project Architecture
               </CardTitle>
-              <CardDescription>Deep analysis of project structure and purpose</CardDescription>
+              <CardDescription>Deep codebase scan and framework identification</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {overview ? (
-                <div className="space-y-4">
-                  <div className="space-y-1">
-                    <h4 className="text-[10px] font-bold text-accent uppercase tracking-widest">Purpose</h4>
-                    <p className="text-sm text-foreground leading-relaxed">{overview.purpose}</p>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <h4 className="text-[10px] font-bold text-accent uppercase tracking-widest">Purpose</h4>
+                      <p className="text-sm text-foreground leading-relaxed">{overview.purpose}</p>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="text-[10px] font-bold text-accent uppercase tracking-widest">Functionality</h4>
+                      <p className="text-sm text-foreground leading-relaxed">{overview.functionality}</p>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <h4 className="text-[10px] font-bold text-accent uppercase tracking-widest">Core Functionality</h4>
-                    <p className="text-sm text-foreground leading-relaxed">{overview.functionality}</p>
+                  
+                  <div className="space-y-2 pt-4 border-t">
+                    <h4 className="text-[10px] font-bold text-accent uppercase tracking-widest flex items-center gap-2">
+                      <FileJson className="h-3 w-3" />
+                      Important Files
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {overview.importantFiles.map((file, idx) => (
+                        <Badge key={idx} variant="outline" className="font-code text-[10px] py-1 border-accent/20">
+                          {file}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <h4 className="text-[10px] font-bold text-accent uppercase tracking-widest">Full Tech Stack</h4>
+
+                  <div className="space-y-2 pt-4 border-t">
+                    <h4 className="text-[10px] font-bold text-accent uppercase tracking-widest">Tech Stack</h4>
                     <div className="flex flex-wrap gap-2">
                       {overview.coreTechnologies.map((tech, idx) => (
                         <Badge key={idx} variant="secondary" className="bg-background border-accent/20 text-accent font-code text-[10px]">
@@ -166,7 +191,28 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
                     </div>
                   </div>
                 </div>
-              ) : <LoadingPlaceholder label="Extracting architecture..." />}
+              ) : <LoadingPlaceholder label="Scanning codebase architecture..." />}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="flow" className="mt-4 animate-in slide-in-from-bottom-2 duration-300">
+          <Card className="border-accent/20 bg-background/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-foreground text-lg font-headline">
+                <Activity className="h-5 w-5 text-accent" />
+                Execution Flow & Logic
+              </CardTitle>
+              <CardDescription>How data and control moves through this project</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {overview?.workingFlow ? (
+                <div className="prose prose-sm prose-invert max-w-none">
+                  <p className="text-sm text-muted-foreground leading-loose whitespace-pre-wrap">
+                    {overview.workingFlow}
+                  </p>
+                </div>
+              ) : <LoadingPlaceholder label="Mapping execution paths..." />}
             </CardContent>
           </Card>
         </TabsContent>
@@ -188,7 +234,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
                   </div>
                 </div>
               </div>
-            )) || <LoadingPlaceholder label="Deconstructing logic steps..." />}
+            )) || <LoadingPlaceholder label="Breaking down logic steps..." />}
           </div>
         </TabsContent>
 
@@ -235,7 +281,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
                 {chatHistory.length === 0 && (
                   <div className="text-center py-8 space-y-3">
                     <p className="text-sm text-muted-foreground italic">
-                      Ask specific questions about this code.
+                      Ask specific questions about this codebase.
                     </p>
                     <div className="flex flex-wrap justify-center gap-2">
                       {['How does the routing work?', 'Find bottlenecks', 'Security check'].map((hint) => (
