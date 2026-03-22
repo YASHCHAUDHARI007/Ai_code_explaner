@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -87,10 +86,15 @@ export default function Home() {
       <Header />
       
       <main className="flex-1 container mx-auto px-4 py-8 max-w-7xl">
+        <div className="text-center mb-12 space-y-4">
+          <h2 className="text-5xl font-headline font-bold text-foreground tracking-tight">Neural Insight</h2>
+          <p className="text-xl text-muted-foreground font-medium tracking-wide">Analyze deeper, debug smarter</p>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 h-full min-h-[calc(100vh-12rem)]">
           <div className="space-y-6 flex flex-col">
             <div className="space-y-1">
-              <h2 className="text-3xl font-headline font-bold text-foreground">Code Input</h2>
+              <h3 className="text-3xl font-headline font-bold text-foreground">Code Input</h3>
               <p className="text-muted-foreground">Paste code, upload files, or import from GitHub.</p>
             </div>
             <div className="flex-1">
@@ -100,7 +104,7 @@ export default function Home() {
 
           <div className="space-y-6 flex flex-col">
             <div className="space-y-1">
-              <h2 className="text-3xl font-headline font-bold text-foreground">AI Insights</h2>
+              <h3 className="text-3xl font-headline font-bold text-foreground">AI Insights</h3>
               <p className="text-muted-foreground">Real-time parallel processing via Llama 3.1 8B.</p>
             </div>
             <div className="flex-1 min-h-[400px]">
@@ -118,7 +122,7 @@ export default function Home() {
 
       <footer className="border-t bg-card py-8 mt-12">
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-muted-foreground uppercase tracking-widest font-medium">
-          <p>© 2024 AI Code Intelligence Lab</p>
+          <p>© 2024 Neural Insight Lab</p>
           <div className="flex gap-8">
             <span className="cursor-default">Auto-Detection Enabled</span>
             <span className="cursor-default">Engine: Groq Llama 3.1</span>

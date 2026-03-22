@@ -2,8 +2,8 @@ import type {Metadata} from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'AI Codebase Explainer & Debugger',
-  description: 'An intelligent platform for analyzing, explaining, and debugging codebases using GenAI.',
+  title: 'Neural Insight',
+  description: 'Analyze deeper, debug smarter. An intelligent platform for analyzing, explaining, and debugging codebases using GenAI.',
 };
 
 export default function RootLayout({
