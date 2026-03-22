@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { InputArea } from '@/components/InputArea';
 import { OutputArea } from '@/components/OutputArea';
@@ -12,8 +12,10 @@ import { type DebugCodeOutput } from '@/ai/flows/ai-debugging-assistant-flow';
 import { type ErrorAnalysisOutput } from '@/ai/flows/ai-error-analysis-flow';
 import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
+import { Code2, Cpu, Loader2 } from 'lucide-react';
 
 export default function Home() {
+  const [showSplash, setShowSplash] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [overview, setOverview] = useState<AiProjectOverviewOutput | null>(null);
   const [explanations, setExplanations] = useState<CodeExplanationOutput | null>(null);
@@ -21,6 +23,13 @@ export default function Home() {
   const [errorAnalysis, setErrorAnalysis] = useState<ErrorAnalysisOutput | null>(null);
   const [activeCode, setActiveCode] = useState('');
   const { toast } = useToast();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleAnalyze = async ({ code, language, mode, errorMessage }: { code: string; language: string; mode: 'beginner' | 'developer'; errorMessage?: string }) => {
     setIsLoading(true);
@@ -80,8 +89,54 @@ export default function Home() {
     }
   };
 
+  if (showSplash) {
+    return (
+      <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background overflow-hidden">
+        <div className="relative flex flex-col items-center gap-8">
+          {/* Logo Hexagon Animation */}
+          <div className="relative animate-in fade-in zoom-in duration-1000 ease-out">
+            <div className="absolute inset-0 bg-accent/20 blur-3xl rounded-full animate-pulse" />
+            <div className="relative bg-card border-2 border-accent/30 p-6 rounded-2xl shadow-2xl shadow-accent/10">
+              <Code2 className="h-16 w-16 text-accent animate-pulse" />
+            </div>
+          </div>
+
+          {/* Text Reveal */}
+          <div className="text-center space-y-2">
+            <h1 className="text-5xl font-headline font-bold tracking-tighter text-foreground animate-in slide-in-from-bottom-4 fade-in duration-700 delay-500 fill-mode-both">
+              Neuralyze
+            </h1>
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="h-px w-8 bg-accent/50 animate-in slide-in-from-left-full duration-1000 delay-700" />
+              <p className="text-xs font-medium text-accent uppercase tracking-[0.3em] animate-in fade-in duration-1000 delay-1000">
+                Initializing Engine
+              </p>
+              <div className="h-px w-8 bg-accent/50 animate-in slide-in-from-right-full duration-1000 delay-700" />
+            </div>
+          </div>
+
+          {/* Loading Bar */}
+          <div className="w-48 h-1 bg-secondary rounded-full overflow-hidden mt-4 animate-in fade-in duration-500 delay-1200">
+            <div className="h-full bg-accent animate-[loading_2.5s_ease-in-out_forwards]" style={{ width: '0%' }} />
+          </div>
+        </div>
+
+        {/* Background Grids */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]" />
+        
+        <style jsx>{`
+          @keyframes loading {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex flex-col bg-background selection:bg-accent/30 selection:text-accent">
+    <div className="min-h-screen flex flex-col bg-background selection:bg-accent/30 selection:text-accent animate-in fade-in duration-1000">
       <Header />
       
       <main className="flex-1 container mx-auto px-4 py-12 max-w-7xl">
