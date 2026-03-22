@@ -11,7 +11,7 @@ import { type DebugCodeOutput } from '@/ai/flows/ai-debugging-assistant-flow';
 import { type ErrorAnalysisOutput } from '@/ai/flows/ai-error-analysis-flow';
 import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
-import { Code2, Cpu, Loader2 } from 'lucide-react';
+import { Code2 } from 'lucide-react';
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
@@ -31,7 +31,7 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleAnalyze = async ({ code, language, mode, model, errorMessage }: { code: string; language: string; mode: 'beginner' | 'developer'; model: string; errorMessage?: string }) => {
+  const handleAnalyze = async ({ code, mode, model, errorMessage }: { code: string; mode: 'beginner' | 'developer'; model: string; errorMessage?: string }) => {
     setIsLoading(true);
     setActiveCode(code);
     setActiveModel(model);
@@ -42,16 +42,14 @@ export default function Home() {
     setErrorAnalysis(null);
 
     try {
-      let finalLanguage = language;
+      // Intelligent Auto-Detection is now the only mode
+      const detection = await getDetectedLanguage(code);
+      const finalLanguage = detection.language;
       
-      if (language === 'auto') {
-        const detection = await getDetectedLanguage(code);
-        finalLanguage = detection.language;
-        toast({
-          title: "Language Detected",
-          description: `Identified as ${finalLanguage.toUpperCase()} (${Math.round(detection.confidence * 100)}% confidence)`,
-        });
-      }
+      toast({
+        title: "Language Detected",
+        description: `Identified as ${finalLanguage.toUpperCase()} (${Math.round(detection.confidence * 100)}% confidence)`,
+      });
 
       const results = await Promise.allSettled([
         getProjectOverview(code, mode, model),
@@ -94,7 +92,6 @@ export default function Home() {
     return (
       <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background overflow-hidden">
         <div className="relative flex flex-col items-center gap-8">
-          {/* Logo Hexagon Animation */}
           <div className="relative animate-in fade-in zoom-in duration-1000 ease-out">
             <div className="absolute inset-0 bg-accent/20 blur-3xl rounded-full animate-pulse" />
             <div className="relative bg-card border-2 border-accent/30 p-6 rounded-2xl shadow-2xl shadow-accent/10">
@@ -102,7 +99,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Text Reveal */}
           <div className="text-center space-y-2">
             <h1 className="text-5xl font-headline font-bold tracking-tighter text-foreground animate-in slide-in-from-bottom-4 fade-in duration-700 delay-500 fill-mode-both">
               Neuralyze
@@ -116,13 +112,11 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Loading Bar */}
           <div className="w-48 h-1 bg-secondary rounded-full overflow-hidden mt-4 animate-in fade-in duration-500 delay-1200">
             <div className="h-full bg-accent animate-[loading_2.5s_ease-in-out_forwards]" style={{ width: '0%' }} />
           </div>
         </div>
 
-        {/* Background Grids */}
         <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]" />
         
         <style jsx>{`

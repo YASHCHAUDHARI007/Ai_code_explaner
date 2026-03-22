@@ -5,7 +5,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Play, Sparkles, AlertCircle, Github, FileUp, Clipboard, Loader2, User, Terminal, Cpu } from 'lucide-react';
-import { LanguageSelector } from './LanguageSelector';
 import { 
   Select,
   SelectContent,
@@ -21,19 +20,18 @@ import { cn } from '@/lib/utils';
 import JSZip from 'jszip';
 
 interface InputAreaProps {
-  onAnalyze: (data: { code: string; language: string; mode: 'beginner' | 'developer'; model: string; errorMessage?: string }) => void;
+  onAnalyze: (data: { code: string; mode: 'beginner' | 'developer'; model: string; errorMessage?: string }) => void;
   isLoading: boolean;
 }
 
-const MAX_ZIP_SIZE = 15 * 1024 * 1024; // 15MB limit for the ZIP file
-const MAX_TOTAL_CHARS = 50000; // Cap total text context to prevent AI timeouts
+const MAX_ZIP_SIZE = 15 * 1024 * 1024; 
+const MAX_TOTAL_CHARS = 50000;
 const IGNORED_DIRS = ['node_modules', '.git', 'dist', 'build', 'venv', '__pycache__', 'images', 'videos', 'bin', 'obj', '.next', 'out', 'target'];
 const SUPPORTED_EXTENSIONS = ['.py', '.java', '.js', '.ts', '.tsx', '.jsx', '.c', '.cpp', '.h', '.hpp', '.html', '.css', '.json', '.md', '.go', '.rs', '.php'];
 const PRIORITY_FILES = ['README.md', 'package.json', 'requirements.txt', 'main.py', 'app.py', 'index.js', 'server.js', 'tsconfig.json', 'Cargo.toml', 'pom.xml', 'build.gradle'];
 
 export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
   const [code, setCode] = useState('');
-  const [language, setLanguage] = useState('auto');
   const [mode, setMode] = useState<'beginner' | 'developer'>('developer');
   const [selectedModel, setSelectedModel] = useState('auto');
   const [errorMessage, setErrorMessage] = useState('');
@@ -47,7 +45,6 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
     if (code.trim()) {
       onAnalyze({ 
         code, 
-        language, 
         mode, 
         model: selectedModel,
         errorMessage: errorMessage.trim() || undefined 
@@ -80,7 +77,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
       toast({ 
         variant: 'destructive', 
         title: 'File Too Large', 
-        description: `ZIP files are limited to ${MAX_ZIP_SIZE / (1024 * 1024)}MB. Please upload a smaller archive.` 
+        description: `ZIP files are limited to ${MAX_ZIP_SIZE / (1024 * 1024)}MB.` 
       });
       return;
     }
@@ -94,7 +91,6 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
         let totalChars = 0;
         let fileCount = 0;
         
-        // Filter and categorize files
         const filesToProcess: { name: string; file: JSZip.JSZipObject; priority: boolean }[] = [];
         
         for (const [filename, fileData] of Object.entries(zipContent.files)) {
@@ -115,7 +111,6 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
           }
         }
 
-        // Sort: Priority files first, then the rest
         filesToProcess.sort((a, b) => (a.priority === b.priority ? 0 : a.priority ? -1 : 1));
 
         setZipProcessingStatus(`Extracting ${filesToProcess.length} valid source files...`);
@@ -125,7 +120,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
 
           const text = await entry.file.async('string');
           const remainingLimit = MAX_TOTAL_CHARS - totalChars;
-          const textToAppend = text.length > remainingLimit ? text.substring(0, remainingLimit) + '\n... [File Truncated due to size limit]' : text;
+          const textToAppend = text.length > remainingLimit ? text.substring(0, remainingLimit) + '\n... [File Truncated]' : text;
           
           extractedText += `// --- File: ${entry.name} ---\n${textToAppend}\n\n`;
           totalChars += textToAppend.length;
@@ -137,11 +132,11 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
         
         toast({ 
           title: 'ZIP Processed Successfully', 
-          description: `Extracted content from ${fileCount} files. (Total context: ${Math.round(totalChars / 1024)}KB)` 
+          description: `Extracted content from ${fileCount} files.` 
         });
       } catch (err) {
         setZipProcessingStatus(null);
-        toast({ variant: 'destructive', title: 'Extraction Failed', description: 'Could not process ZIP file. Ensure it is not corrupted.' });
+        toast({ variant: 'destructive', title: 'Extraction Failed', description: 'Could not process ZIP file.' });
       }
     } else {
       const reader = new FileReader();
@@ -193,7 +188,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t">
+        <div className="pt-2 border-t">
           <div className="flex items-center gap-3">
             <Cpu className="h-4 w-4 text-muted-foreground" />
             <div className="flex-1">
@@ -208,12 +203,6 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
                   <SelectItem value="llama-3.3-70b-versatile">Llama 3.3 70B (Logic)</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="flex-1">
-              <LanguageSelector value={language} onChange={setLanguage} />
             </div>
           </div>
         </div>
@@ -267,9 +256,8 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
                 <FileUp className="h-12 w-12 text-muted-foreground/50 mb-4" />
                 <h3 className="font-headline font-bold">Click to Upload</h3>
                 <p className="text-sm text-muted-foreground text-center mt-2 max-w-xs">
-                  Support for .py, .java, .js, .ts, .c, .cpp, .html, .css, .json, and .md
+                  Supported formats: .py, .java, .js, .ts, .c, .cpp, .html, .css, .json, and .md
                 </p>
-                <p className="text-[10px] text-muted-foreground mt-2 font-code">Max Size: 15MB</p>
               </>
             )}
             <input 
@@ -302,9 +290,6 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
                 </Button>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground italic">
-              Note: This will fetch sample files from the repository root to provide context.
-            </p>
           </div>
         </TabsContent>
       </Tabs>
@@ -314,7 +299,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
           <AccordionTrigger className="hover:no-underline py-3">
             <div className="flex items-center gap-2 text-muted-foreground">
               <AlertCircle className="h-4 w-4" />
-              <span className="text-sm font-medium">Add Runtime Error / Stack Trace (Optional)</span>
+              <span className="text-sm font-medium">Add Runtime Error (Optional)</span>
             </div>
           </AccordionTrigger>
           <AccordionContent>
@@ -336,7 +321,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
         {isLoading ? (
           <div className="flex items-center gap-2">
             <Loader2 className="h-5 w-5 animate-spin" />
-            AI Processing in {mode.charAt(0).toUpperCase() + mode.slice(1)} Mode...
+            AI Processing...
           </div>
         ) : (
           <div className="flex items-center gap-2">
