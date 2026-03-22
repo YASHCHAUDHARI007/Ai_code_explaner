@@ -84,13 +84,13 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-background selection:bg-accent/30 selection:text-accent">
       <Header />
       
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-7xl">
-        <div className="text-center mb-12 space-y-4">
-          <h2 className="text-5xl font-headline font-bold text-foreground tracking-tight">Neuralyze</h2>
+      <main className="flex-1 container mx-auto px-4 py-12 max-w-7xl">
+        <div className="text-center mb-16 space-y-4 animate-in fade-in slide-in-from-top-12 duration-1000 ease-out fill-mode-both">
+          <h2 className="text-6xl font-headline font-bold text-foreground tracking-tight">Neuralyze</h2>
           <p className="text-xl text-muted-foreground font-medium tracking-wide">Analyze Deeper, Debug Smarter</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 h-full min-h-[calc(100vh-12rem)]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 h-full min-h-[calc(100vh-12rem)] animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200 ease-out fill-mode-both">
           <div className="space-y-6 flex flex-col">
             <div className="space-y-1">
               <h3 className="text-3xl font-headline font-bold text-foreground">Code Source</h3>
@@ -119,7 +119,7 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="border-t bg-card py-8 mt-12">
+      <footer className="border-t bg-card py-8 mt-12 animate-in fade-in duration-1000 delay-500 fill-mode-both">
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-muted-foreground uppercase tracking-widest font-medium">
           <p>© 2024 Neuralyze Lab</p>
           <div className="flex gap-8">
