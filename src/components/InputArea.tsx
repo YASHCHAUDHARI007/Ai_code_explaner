@@ -228,7 +228,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
                 <FileUp className="h-12 w-12 text-muted-foreground/50 mb-4" />
                 <h3 className="font-headline font-bold">Click to Upload</h3>
                 <p className="text-sm text-muted-foreground text-center mt-2 max-w-xs">
-                  Upload a ZIP of your project. node_modules and binary files will be ignored.
+                  Support for .py, .java, .js, .ts, .c, .cpp, .html, .css, .json, and .md
                 </p>
                 <p className="text-[10px] text-muted-foreground mt-2 font-code">Max Size: 15MB</p>
               </>
