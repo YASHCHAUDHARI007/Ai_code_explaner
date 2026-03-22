@@ -1,13 +1,29 @@
 'use client';
 
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Info, ListChecks, Bug, Terminal, ChevronRight, Cpu, Zap, ShieldAlert } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { 
+  Info, 
+  ListChecks, 
+  Bug, 
+  Terminal, 
+  ChevronRight, 
+  Cpu, 
+  Zap, 
+  ShieldAlert, 
+  MessageSquare, 
+  Send,
+  Loader2
+} from 'lucide-react';
 import { type AiProjectOverviewOutput } from '@/ai/flows/ai-project-overview';
 import { type CodeExplanationOutput } from '@/ai/flows/ai-line-by-line-explanation';
 import { type DebugCodeOutput } from '@/ai/flows/ai-debugging-assistant-flow';
 import { type ErrorAnalysisOutput } from '@/ai/flows/ai-error-analysis-flow';
+import { getAiAnswer } from '@/lib/actions';
 
 interface OutputAreaProps {
   overview: AiProjectOverviewOutput | null;
@@ -18,6 +34,25 @@ interface OutputAreaProps {
 }
 
 export function OutputArea({ overview, explanations, debugging, errorAnalysis, code }: OutputAreaProps) {
+  const [question, setQuestion] = useState('');
+  const [isAsking, setIsAsking] = useState(false);
+  const [chatHistory, setChatHistory] = useState<{ q: string; a: string }[]>([]);
+
+  const handleAsk = async () => {
+    if (!question.trim() || !code) return;
+    
+    setIsAsking(true);
+    try {
+      const result = await getAiAnswer(code, question);
+      setChatHistory(prev => [...prev, { q: question, a: result.answer }]);
+      setQuestion('');
+    } catch (error) {
+      console.error("Chat Error:", error);
+    } finally {
+      setIsAsking(false);
+    }
+  };
+
   if (!overview && !explanations && !debugging && !errorAnalysis) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-card/50 border-2 border-dashed rounded-2xl">
@@ -42,6 +77,10 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
         <TabsTrigger value="debugging" className="flex-1 flex items-center gap-2 data-[state=active]:bg-background">
           <Bug className="h-4 w-4" />
           <span>Static Bugs</span>
+        </TabsTrigger>
+        <TabsTrigger value="chat" className="flex-1 flex items-center gap-2 data-[state=active]:bg-background">
+          <MessageSquare className="h-4 w-4" />
+          <span>Ask AI</span>
         </TabsTrigger>
         <TabsTrigger value="error-analysis" className="flex-1 flex items-center gap-2 data-[state=active]:bg-background">
           <ShieldAlert className="h-4 w-4 text-destructive" />
@@ -134,6 +173,73 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
         ) : debugging ? (
           <EmptyState title="No Static Bugs" description="Heuristic analysis passed with flying colors." />
         ) : <LoadingPlaceholder label="Scanning for vulnerabilities..." />}
+      </TabsContent>
+
+      <TabsContent value="chat" className="mt-4 space-y-4 animate-in slide-in-from-bottom-2 duration-300">
+        <Card className="border-accent/20">
+          <CardHeader>
+            <CardTitle className="text-lg font-headline flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-accent" />
+              Ask anything about this code
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-col gap-4 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin">
+              {chatHistory.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-8 italic">
+                  Example: "Explain the authentication logic" or "How can I improve performance here?"
+                </p>
+              )}
+              {chatHistory.map((chat, i) => (
+                <div key={i} className="space-y-3">
+                  <div className="flex justify-end">
+                    <div className="bg-accent/10 border border-accent/20 p-3 rounded-2xl rounded-tr-none max-w-[80%]">
+                      <p className="text-sm font-medium">{chat.q}</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-start">
+                    <div className="bg-card border p-3 rounded-2xl rounded-tl-none max-w-[90%] space-y-2">
+                      <p className="text-[10px] font-bold text-accent uppercase tracking-widest">AI Response</p>
+                      <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                        {chat.a}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {isAsking && (
+                <div className="flex justify-start">
+                  <div className="bg-card border p-4 rounded-2xl rounded-tl-none flex items-center gap-3">
+                    <Loader2 className="h-4 w-4 animate-spin text-accent" />
+                    <span className="text-xs text-muted-foreground">Thinking...</span>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex gap-2 pt-4 border-t">
+              <Textarea 
+                placeholder="Type your question..."
+                className="min-h-[60px] resize-none text-sm"
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleAsk();
+                  }
+                }}
+              />
+              <Button 
+                onClick={handleAsk} 
+                disabled={isAsking || !question.trim()}
+                className="h-auto px-4 bg-accent hover:bg-accent/90"
+              >
+                <Send className="h-5 w-5" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </TabsContent>
 
       <TabsContent value="error-analysis" className="mt-4 animate-in slide-in-from-bottom-2 duration-300">

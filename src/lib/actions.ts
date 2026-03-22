@@ -1,4 +1,3 @@
-
 'use server';
 
 import { aiProjectOverview, type AiProjectOverviewOutput } from '@/ai/flows/ai-project-overview';
@@ -6,6 +5,7 @@ import { explainCodeLineByLine, type CodeExplanationOutput } from '@/ai/flows/ai
 import { debugCode, type DebugCodeOutput } from '@/ai/flows/ai-debugging-assistant-flow';
 import { analyzeRuntimeError, type ErrorAnalysisOutput } from '@/ai/flows/ai-error-analysis-flow';
 import { detectLanguage, type LanguageDetectionOutput } from '@/ai/flows/ai-language-detection-flow';
+import { askCodeQuestion, type ChatOutput } from '@/ai/flows/ai-chat-flow';
 
 export async function getProjectOverview(code: string): Promise<AiProjectOverviewOutput> {
   return await aiProjectOverview({ code });
@@ -25,6 +25,10 @@ export async function getErrorAnalysis(code: string, errorMessage: string, langu
 
 export async function getDetectedLanguage(code: string): Promise<LanguageDetectionOutput> {
   return await detectLanguage({ code });
+}
+
+export async function getAiAnswer(code: string, question: string, language?: string): Promise<ChatOutput> {
+  return await askCodeQuestion({ code, question, language });
 }
 
 /**
