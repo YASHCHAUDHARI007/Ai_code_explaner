@@ -9,14 +9,16 @@ export type ErrorAnalysisOutput = {
   severity: 'low' | 'medium' | 'high';
 };
 
-export async function analyzeRuntimeError(input: { errorCode: string; errorMessage: string; language: string }): Promise<ErrorAnalysisOutput> {
+export async function analyzeRuntimeError(input: { errorCode: string; errorMessage: string; language: string; model?: string }): Promise<ErrorAnalysisOutput> {
   const truncatedError = input.errorMessage.slice(0, 3000);
   const truncatedCode = input.errorCode.slice(0, 3000);
 
-  // Dynamic model selection
-  const model = (truncatedCode.length > 2500 || truncatedError.length > 1000) 
-    ? 'llama-3.3-70b-versatile' 
-    : 'llama-3.1-8b-instant';
+  // Use user selected model or fallback to intelligent auto-selection
+  const model = (input.model && input.model !== 'auto')
+    ? input.model
+    : (truncatedCode.length > 2500 || truncatedError.length > 1000) 
+      ? 'llama-3.3-70b-versatile' 
+      : 'llama-3.1-8b-instant';
 
   const response = await groqClient.chat.completions.create({
     model: model,

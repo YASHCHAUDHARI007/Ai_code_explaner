@@ -1,12 +1,18 @@
-
 'use client';
 
 import { useState, useRef } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Play, Sparkles, AlertCircle, Github, FileUp, Clipboard, Loader2, User, Terminal } from 'lucide-react';
+import { Play, Sparkles, AlertCircle, Github, FileUp, Clipboard, Loader2, User, Terminal, Cpu } from 'lucide-react';
 import { LanguageSelector } from './LanguageSelector';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { fetchGitHubRepo } from '@/lib/actions';
@@ -15,7 +21,7 @@ import { cn } from '@/lib/utils';
 import JSZip from 'jszip';
 
 interface InputAreaProps {
-  onAnalyze: (data: { code: string; language: string; mode: 'beginner' | 'developer'; errorMessage?: string }) => void;
+  onAnalyze: (data: { code: string; language: string; mode: 'beginner' | 'developer'; model: string; errorMessage?: string }) => void;
   isLoading: boolean;
 }
 
@@ -29,6 +35,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('auto');
   const [mode, setMode] = useState<'beginner' | 'developer'>('developer');
+  const [selectedModel, setSelectedModel] = useState('auto');
   const [errorMessage, setErrorMessage] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [isFetchingGithub, setIsFetchingGithub] = useState(false);
@@ -38,7 +45,13 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
 
   const handleAnalyze = () => {
     if (code.trim()) {
-      onAnalyze({ code, language, mode, errorMessage: errorMessage.trim() || undefined });
+      onAnalyze({ 
+        code, 
+        language, 
+        mode, 
+        model: selectedModel,
+        errorMessage: errorMessage.trim() || undefined 
+      });
     }
   };
 
@@ -142,41 +155,67 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card p-4 rounded-xl border">
-        <div className="flex items-center gap-3">
-          <div className="bg-accent/10 p-2 rounded-lg">
-            <Sparkles className="text-accent h-5 w-5" />
+      <div className="flex flex-col gap-4 bg-card p-4 rounded-xl border">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-accent/10 p-2 rounded-lg">
+              <Sparkles className="text-accent h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="font-headline font-semibold">Workspace Settings</h2>
+              <p className="text-xs text-muted-foreground">Configure your analysis engine</p>
+            </div>
           </div>
-          <div>
-            <h2 className="font-headline font-semibold">Workspace Settings</h2>
-            <p className="text-xs text-muted-foreground">Configure your analysis engine</p>
+          
+          <div className="flex items-center gap-4">
+            <div className="flex bg-secondary p-1 rounded-lg border border-border/50">
+              <button
+                onClick={() => setMode('beginner')}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-md transition-all",
+                  mode === 'beginner' ? "bg-background text-accent shadow-sm" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <User className="h-3 w-3" />
+                Beginner
+              </button>
+              <button
+                onClick={() => setMode('developer')}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-md transition-all",
+                  mode === 'developer' ? "bg-background text-accent shadow-sm" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <Terminal className="h-3 w-3" />
+                Developer
+              </button>
+            </div>
           </div>
         </div>
-        
-        <div className="flex items-center gap-4">
-          <div className="flex bg-secondary p-1 rounded-lg border border-border/50">
-            <button
-              onClick={() => setMode('beginner')}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-md transition-all",
-                mode === 'beginner' ? "bg-background text-accent shadow-sm" : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <User className="h-3 w-3" />
-              Beginner
-            </button>
-            <button
-              onClick={() => setMode('developer')}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-md transition-all",
-                mode === 'developer' ? "bg-background text-accent shadow-sm" : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <Terminal className="h-3 w-3" />
-              Developer
-            </button>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t">
+          <div className="flex items-center gap-3">
+            <Cpu className="h-4 w-4 text-muted-foreground" />
+            <div className="flex-1">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block mb-1">AI Intelligence</span>
+              <Select value={selectedModel} onValueChange={setSelectedModel}>
+                <SelectTrigger className="w-full h-9 bg-secondary border-border focus:ring-accent">
+                  <SelectValue placeholder="Select Model" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="auto">✨ Auto-Select (Intelligent)</SelectItem>
+                  <SelectItem value="llama-3.1-8b-instant">Llama 3.1 8B (Speed)</SelectItem>
+                  <SelectItem value="llama-3.3-70b-versatile">Llama 3.3 70B (Logic)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          <LanguageSelector value={language} onChange={setLanguage} />
+
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <LanguageSelector value={language} onChange={setLanguage} />
+            </div>
+          </div>
         </div>
       </div>
 

@@ -9,14 +9,16 @@ export type CodeExplanationOutput = {
   }>;
 };
 
-export async function explainCodeLineByLine(input: { code: string; language?: string; mode?: 'beginner' | 'developer' }): Promise<CodeExplanationOutput> {
+export async function explainCodeLineByLine(input: { code: string; language?: string; mode?: 'beginner' | 'developer'; model?: string }): Promise<CodeExplanationOutput> {
   const truncatedCode = input.code.slice(0, 4000);
   const mode = input.mode || 'developer';
 
-  // Dynamic model selection: Large files need better context tracking
-  const model = (truncatedCode.length > 2500 || truncatedCode.split('\n').length > 60) 
-    ? 'llama-3.3-70b-versatile' 
-    : 'llama-3.1-8b-instant';
+  // Use user selected model or fallback to intelligent auto-selection
+  const model = (input.model && input.model !== 'auto')
+    ? input.model
+    : (truncatedCode.length > 2500 || truncatedCode.split('\n').length > 60) 
+      ? 'llama-3.3-70b-versatile' 
+      : 'llama-3.1-8b-instant';
 
   const systemPrompt = mode === 'beginner'
     ? 'Explain the provided code line by line for a beginner. Use simple language and analogies. Avoid technical jargon where possible. Return JSON with an "explanations" array of {line, explanation} objects.'

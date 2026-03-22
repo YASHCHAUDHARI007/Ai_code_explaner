@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -22,6 +21,7 @@ export default function Home() {
   const [debugging, setDebugging] = useState<DebugCodeOutput | null>(null);
   const [errorAnalysis, setErrorAnalysis] = useState<ErrorAnalysisOutput | null>(null);
   const [activeCode, setActiveCode] = useState('');
+  const [activeModel, setActiveModel] = useState('auto');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -31,9 +31,10 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleAnalyze = async ({ code, language, mode, errorMessage }: { code: string; language: string; mode: 'beginner' | 'developer'; errorMessage?: string }) => {
+  const handleAnalyze = async ({ code, language, mode, model, errorMessage }: { code: string; language: string; mode: 'beginner' | 'developer'; model: string; errorMessage?: string }) => {
     setIsLoading(true);
     setActiveCode(code);
+    setActiveModel(model);
     
     setOverview(null);
     setExplanations(null);
@@ -53,10 +54,10 @@ export default function Home() {
       }
 
       const results = await Promise.allSettled([
-        getProjectOverview(code, mode),
-        getLineByLineExplanation(code, finalLanguage, mode),
-        getDebugAnalysis(code, finalLanguage, mode),
-        errorMessage ? getErrorAnalysis(code, errorMessage, finalLanguage) : Promise.resolve(null)
+        getProjectOverview(code, mode, model),
+        getLineByLineExplanation(code, finalLanguage, mode, model),
+        getDebugAnalysis(code, finalLanguage, mode, model),
+        errorMessage ? getErrorAnalysis(code, errorMessage, finalLanguage, model) : Promise.resolve(null)
       ]);
 
       if (results[0].status === 'fulfilled') setOverview(results[0].value);
@@ -74,7 +75,7 @@ export default function Home() {
       } else {
         toast({
           title: "Analysis Complete",
-          description: `Insights generated for ${mode} level.`,
+          description: `Insights generated for ${mode} level using ${model === 'auto' ? 'Intelligent Select' : model}.`,
         });
       }
     } catch (error) {
@@ -172,6 +173,7 @@ export default function Home() {
                 debugging={debugging} 
                 errorAnalysis={errorAnalysis}
                 code={activeCode}
+                model={activeModel}
               />
             </div>
           </div>

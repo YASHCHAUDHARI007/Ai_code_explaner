@@ -9,14 +9,16 @@ export type ChatOutput = {
 /**
  * AI Flow to handle specific questions about a code snippet.
  */
-export async function askCodeQuestion(input: { code: string; question: string; language?: string }): Promise<ChatOutput> {
+export async function askCodeQuestion(input: { code: string; question: string; language?: string; model?: string }): Promise<ChatOutput> {
   const truncatedCode = input.code.slice(0, 5000);
   const truncatedQuestion = input.question.slice(0, 500);
 
-  // Dynamic model selection
-  const model = (truncatedCode.length > 2500 || truncatedCode.split('\n').length > 60) 
-    ? 'llama-3.3-70b-versatile' 
-    : 'llama-3.1-8b-instant';
+  // Use user selected model or fallback to intelligent auto-selection
+  const model = (input.model && input.model !== 'auto') 
+    ? input.model 
+    : (truncatedCode.length > 2500 || truncatedCode.split('\n').length > 60) 
+      ? 'llama-3.3-70b-versatile' 
+      : 'llama-3.1-8b-instant';
 
   const response = await groqClient.chat.completions.create({
     model: model,

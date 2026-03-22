@@ -15,12 +15,14 @@ export type AiProjectOverviewOutput = {
 /**
  * AI Flow to perform deep architectural analysis of a codebase.
  */
-export async function aiProjectOverview(input: { code: string; mode?: 'beginner' | 'developer' }): Ratio<AiProjectOverviewOutput> {
+export async function aiProjectOverview(input: { code: string; mode?: 'beginner' | 'developer'; model?: string }): Promise<AiProjectOverviewOutput> {
   const truncatedCode = input.code.slice(0, 8000);
   const mode = input.mode || 'developer';
 
-  // Overviews of multiple files are always complex - default to high reasoning
-  const model = truncatedCode.length > 3000 ? 'llama-3.3-70b-versatile' : 'llama-3.1-8b-instant';
+  // Use user selected model or fallback to intelligent auto-selection
+  const model = (input.model && input.model !== 'auto')
+    ? input.model
+    : truncatedCode.length > 3000 ? 'llama-3.3-70b-versatile' : 'llama-3.1-8b-instant';
 
   const systemPrompt = mode === 'beginner' 
     ? `You are a friendly technical architect explaining a project to a beginner. 

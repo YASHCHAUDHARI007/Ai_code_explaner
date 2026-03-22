@@ -38,9 +38,10 @@ interface OutputAreaProps {
   debugging: DebugCodeOutput | null;
   errorAnalysis: ErrorAnalysisOutput | null;
   code: string;
+  model: string;
 }
 
-export function OutputArea({ overview, explanations, debugging, errorAnalysis, code }: OutputAreaProps) {
+export function OutputArea({ overview, explanations, debugging, errorAnalysis, code, model }: OutputAreaProps) {
   const [question, setQuestion] = useState('');
   const [isAsking, setIsAsking] = useState(false);
   const [chatHistory, setChatHistory] = useState<{ q: string; a: string }[]>([]);
@@ -50,7 +51,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
     
     setIsAsking(true);
     try {
-      const result = await getAiAnswer(code, question);
+      const result = await getAiAnswer(code, question, undefined, model);
       setChatHistory(prev => [...prev, { q: question, a: result.answer }]);
       setQuestion('');
     } catch (error) {

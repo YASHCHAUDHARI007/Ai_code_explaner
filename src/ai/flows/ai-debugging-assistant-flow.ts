@@ -11,14 +11,16 @@ export type DebugCodeOutput = {
   }>;
 };
 
-export async function debugCode(input: { code: string; language: string; mode?: 'beginner' | 'developer' }): Promise<DebugCodeOutput> {
+export async function debugCode(input: { code: string; language: string; mode?: 'beginner' | 'developer'; model?: string }): Promise<DebugCodeOutput> {
   const truncatedCode = input.code.slice(0, 5000);
   const mode = input.mode || 'developer';
 
-  // Dynamic model selection: Debugging requires high reasoning for complex files
-  const model = (truncatedCode.length > 2000 || truncatedCode.split('\n').length > 50) 
-    ? 'llama-3.3-70b-versatile' 
-    : 'llama-3.1-8b-instant';
+  // Use user selected model or fallback to intelligent auto-selection
+  const model = (input.model && input.model !== 'auto')
+    ? input.model
+    : (truncatedCode.length > 2000 || truncatedCode.split('\n').length > 50) 
+      ? 'llama-3.3-70b-versatile' 
+      : 'llama-3.1-8b-instant';
 
   const systemPrompt = mode === 'beginner'
     ? 'Find bugs in the code and explain them simply for a beginner. Suggest easy-to-understand fixes. Return JSON with a "bugs" array of {description, suggestion, explanation, lineNumber}.'

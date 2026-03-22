@@ -1,4 +1,3 @@
-
 'use server';
 
 import { aiProjectOverview, type AiProjectOverviewOutput } from '@/ai/flows/ai-project-overview';
@@ -8,28 +7,28 @@ import { analyzeRuntimeError, type ErrorAnalysisOutput } from '@/ai/flows/ai-err
 import { detectLanguage, type LanguageDetectionOutput } from '@/ai/flows/ai-language-detection-flow';
 import { askCodeQuestion, type ChatOutput } from '@/ai/flows/ai-chat-flow';
 
-export async function getProjectOverview(code: string, mode?: 'beginner' | 'developer'): Promise<AiProjectOverviewOutput> {
-  return await aiProjectOverview({ code, mode });
+export async function getProjectOverview(code: string, mode?: 'beginner' | 'developer', model?: string): Promise<AiProjectOverviewOutput> {
+  return await aiProjectOverview({ code, mode, model });
 }
 
-export async function getLineByLineExplanation(code: string, language?: string, mode?: 'beginner' | 'developer'): Promise<CodeExplanationOutput> {
-  return await explainCodeLineByLine({ code, language, mode });
+export async function getLineByLineExplanation(code: string, language?: string, mode?: 'beginner' | 'developer', model?: string): Promise<CodeExplanationOutput> {
+  return await explainCodeLineByLine({ code, language, mode, model });
 }
 
-export async function getDebugAnalysis(code: string, language: string, mode?: 'beginner' | 'developer'): Promise<DebugCodeOutput> {
-  return await debugCode({ code, language, mode });
+export async function getDebugAnalysis(code: string, language: string, mode?: 'beginner' | 'developer', model?: string): Promise<DebugCodeOutput> {
+  return await debugCode({ code, language, mode, model });
 }
 
-export async function getErrorAnalysis(code: string, errorMessage: string, language: string): Promise<ErrorAnalysisOutput> {
-  return await analyzeRuntimeError({ errorCode: code, errorMessage, language });
+export async function getErrorAnalysis(code: string, errorMessage: string, language: string, model?: string): Promise<ErrorAnalysisOutput> {
+  return await analyzeRuntimeError({ errorCode: code, errorMessage, language, model });
 }
 
 export async function getDetectedLanguage(code: string): Promise<LanguageDetectionOutput> {
   return await detectLanguage({ code });
 }
 
-export async function getAiAnswer(code: string, question: string, language?: string): Promise<ChatOutput> {
-  return await askCodeQuestion({ code, question, language });
+export async function getAiAnswer(code: string, question: string, language?: string, model?: string): Promise<ChatOutput> {
+  return await askCodeQuestion({ code, question, language, model });
 }
 
 /**
