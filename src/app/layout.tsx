@@ -3,7 +3,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Neural Insight',
-  description: 'Analyze deeper, debug smarter. An intelligent platform for analyzing, explaining, and debugging codebases using GenAI.',
+  description: 'Analyze Deeper, Debug Smarter. An intelligent platform for analyzing, explaining, and debugging codebases using GenAI.',
 };
 
 export default function RootLayout({
