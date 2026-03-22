@@ -1,4 +1,3 @@
-
 'use server';
 
 import { groqClient } from '@/lib/groq';
@@ -14,12 +13,17 @@ export async function explainCodeLineByLine(input: { code: string; language?: st
   const truncatedCode = input.code.slice(0, 4000);
   const mode = input.mode || 'developer';
 
+  // Dynamic model selection: Large files need better context tracking
+  const model = (truncatedCode.length > 2500 || truncatedCode.split('\n').length > 60) 
+    ? 'llama-3.3-70b-versatile' 
+    : 'llama-3.1-8b-instant';
+
   const systemPrompt = mode === 'beginner'
     ? 'Explain the provided code line by line for a beginner. Use simple language and analogies. Avoid technical jargon where possible. Return JSON with an "explanations" array of {line, explanation} objects.'
     : 'Explain the provided code line by line for a senior developer. Be concise, technical, and focus on logic flow, performance, or specific language features. Return JSON with an "explanations" array of {line, explanation} objects.';
 
   const response = await groqClient.chat.completions.create({
-    model: 'llama-3.1-8b-instant',
+    model: model,
     messages: [
       {
         role: 'system',

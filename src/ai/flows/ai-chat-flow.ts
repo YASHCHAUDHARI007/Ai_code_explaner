@@ -13,8 +13,13 @@ export async function askCodeQuestion(input: { code: string; question: string; l
   const truncatedCode = input.code.slice(0, 5000);
   const truncatedQuestion = input.question.slice(0, 500);
 
+  // Dynamic model selection
+  const model = (truncatedCode.length > 2500 || truncatedCode.split('\n').length > 60) 
+    ? 'llama-3.3-70b-versatile' 
+    : 'llama-3.1-8b-instant';
+
   const response = await groqClient.chat.completions.create({
-    model: 'llama-3.1-8b-instant',
+    model: model,
     messages: [
       {
         role: 'system',

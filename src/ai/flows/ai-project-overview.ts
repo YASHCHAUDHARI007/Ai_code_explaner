@@ -15,9 +15,12 @@ export type AiProjectOverviewOutput = {
 /**
  * AI Flow to perform deep architectural analysis of a codebase.
  */
-export async function aiProjectOverview(input: { code: string; mode?: 'beginner' | 'developer' }): Promise<AiProjectOverviewOutput> {
+export async function aiProjectOverview(input: { code: string; mode?: 'beginner' | 'developer' }): Ratio<AiProjectOverviewOutput> {
   const truncatedCode = input.code.slice(0, 8000);
   const mode = input.mode || 'developer';
+
+  // Overviews of multiple files are always complex - default to high reasoning
+  const model = truncatedCode.length > 3000 ? 'llama-3.3-70b-versatile' : 'llama-3.1-8b-instant';
 
   const systemPrompt = mode === 'beginner' 
     ? `You are a friendly technical architect explaining a project to a beginner. 
@@ -38,7 +41,7 @@ export async function aiProjectOverview(input: { code: string; mode?: 'beginner'
        Return valid JSON with keys: "projectType", "entryPoint", "purpose", "functionality", "workingFlow", "importantFiles", "coreTechnologies".`;
 
   const response = await groqClient.chat.completions.create({
-    model: 'llama-3.1-8b-instant',
+    model: model,
     messages: [
       {
         role: 'system',
