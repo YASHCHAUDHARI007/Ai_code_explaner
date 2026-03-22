@@ -87,7 +87,7 @@ export default function Home() {
       
       <main className="flex-1 container mx-auto px-4 py-8 max-w-7xl">
         <div className="text-center mb-12 space-y-4">
-          <h2 className="text-5xl font-headline font-bold text-foreground tracking-tight">Neural Insight</h2>
+          <h2 className="text-5xl font-headline font-bold text-foreground tracking-tight">Neuralyze</h2>
           <p className="text-xl text-muted-foreground font-medium tracking-wide">Analyze Deeper, Debug Smarter</p>
         </div>
 
@@ -122,7 +122,7 @@ export default function Home() {
 
       <footer className="border-t bg-card py-8 mt-12">
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-muted-foreground uppercase tracking-widest font-medium">
-          <p>© 2024 Neural Insight Lab</p>
+          <p>© 2024 Neuralyze Lab</p>
           <div className="flex gap-8">
             <span className="cursor-default">Auto-Detection Enabled</span>
             <span className="cursor-default">Engine: Groq Llama 3.1</span>

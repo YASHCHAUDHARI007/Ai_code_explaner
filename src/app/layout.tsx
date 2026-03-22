@@ -2,7 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Neural Insight',
+  title: 'Neuralyze',
   description: 'Analyze Deeper, Debug Smarter. An intelligent platform for analyzing, explaining, and debugging codebases using GenAI.',
 };
 

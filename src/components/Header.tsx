@@ -9,7 +9,7 @@ export function Header() {
             <Code2 className="text-primary-foreground h-6 w-6" />
           </div>
           <h1 className="text-xl font-headline font-bold tracking-tight">
-            Neural <span className="text-accent">Insight</span>
+            Neuralyze <span className="text-accent">Studio</span>
           </h1>
         </div>
         <nav className="hidden md:flex items-center gap-6">
