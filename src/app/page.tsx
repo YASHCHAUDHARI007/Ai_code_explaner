@@ -97,7 +97,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full animate-pulse" />
             <div className="relative glass-card p-10 rounded-[2.5rem] shadow-2xl flex items-center justify-center bg-primary">
               <Image 
-                src="/logo.png" 
+                src="https://neuralyze.edgeone.app/logo.png" 
                 alt="Neuralyze" 
                 width={120} 
                 height={120} 

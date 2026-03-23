@@ -10,7 +10,7 @@ export function Header() {
             <div className="absolute inset-0 bg-primary/20 blur-lg rounded-xl group-hover:bg-primary/40 transition-colors" />
             <div className="relative bg-primary p-1.5 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center">
               <Image 
-                src="/logo.png" 
+                src="https://neuralyze.edgeone.app/logo.png" 
                 alt="Neuralyze Logo" 
                 width={32} 
                 height={32} 
