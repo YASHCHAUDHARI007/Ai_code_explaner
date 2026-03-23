@@ -103,6 +103,7 @@ export default function Home() {
                 height={120} 
                 className="animate-float"
                 priority
+                unoptimized
               />
             </div>
           </div>

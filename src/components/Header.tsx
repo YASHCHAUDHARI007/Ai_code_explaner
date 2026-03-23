@@ -14,6 +14,7 @@ export function Header() {
                 alt="Neuralyze Logo" 
                 width={32} 
                 height={32} 
+                unoptimized
               />
             </div>
           </div>
