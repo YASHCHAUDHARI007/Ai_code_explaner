@@ -256,7 +256,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
                 <FileUp className="h-12 w-12 text-muted-foreground/50 mb-4" />
                 <h3 className="font-headline font-bold">Click to Upload</h3>
                 <p className="text-sm text-muted-foreground text-center mt-2 max-w-xs">
-                  Supported formats: .py, .java, .js, .ts, .c, .cpp, .html, .css, .json, and .md
+                  Supported formats: .py, .java, .js, .ts, .c, .cpp, .html, .css, .json, and .md max limit:15
                 </p>
               </>
             )}
