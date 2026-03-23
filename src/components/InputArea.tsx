@@ -36,7 +36,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
   const [selectedModel, setSelectedModel] = useState('auto');
   const [errorMessage, setErrorMessage] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
-  const [isFetchingGithub, setIsFetchingGithub] = useState(false);
+  const [isFetchingGitHub, setIsFetchingGitHub] = useState(false);
   const [zipProcessingStatus, setZipProcessingStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -57,7 +57,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
       toast({ variant: 'destructive', title: 'Invalid URL', description: 'Please enter a valid GitHub repository URL.' });
       return;
     }
-    setIsFetchingGithub(true);
+    setIsFetchingGitHub(true);
     try {
       const combinedCode = await fetchGitHubRepo(githubUrl);
       setCode(combinedCode);
@@ -65,7 +65,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
     } catch (err: any) {
       toast({ variant: 'destructive', title: 'Fetch Failed', description: err.message });
     } finally {
-      setIsFetchingGithub(false);
+      setIsFetchingGitHub(false);
     }
   };
 
@@ -256,7 +256,9 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
                 <FileUp className="h-12 w-12 text-muted-foreground/50 mb-4" />
                 <h3 className="font-headline font-bold">Click to Upload</h3>
                 <p className="text-sm text-muted-foreground text-center mt-2 max-w-xs">
-                  Supported formats: .py, .java, .js, .ts, .c, .cpp, .html, .css, .json, and .md max limit:15
+                  Supported formats: .py, .java, .js, .ts, .c, .cpp, .html, .css, .json, and .md
+                  <br />
+                  max limit: 15mb
                 </p>
               </>
             )}
@@ -283,10 +285,10 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
                 />
                 <Button 
                   onClick={handleGithubFetch} 
-                  disabled={isFetchingGithub || !githubUrl}
+                  disabled={isFetchingGitHub || !githubUrl}
                   variant="secondary"
                 >
-                  {isFetchingGithub ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Fetch'}
+                  {isFetchingGitHub ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Fetch'}
                 </Button>
               </div>
             </div>
