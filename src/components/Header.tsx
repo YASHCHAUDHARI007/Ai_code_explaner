@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Bug, BookOpen } from 'lucide-react';
+import { NEURALYZE_LOGO } from '@/lib/assets';
 
 export function Header() {
   return (
@@ -8,13 +9,12 @@ export function Header() {
         <div className="flex items-center gap-3 group cursor-pointer">
           <div className="relative">
             <div className="absolute inset-0 bg-primary/20 blur-lg rounded-xl group-hover:bg-primary/40 transition-colors" />
-            <div className="relative bg-primary p-1.5 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center">
+            <div className="relative bg-[#0F172A] p-1.5 rounded-xl shadow-lg border border-primary/20 flex items-center justify-center">
               <Image 
-                src="https://neuralyze.edgeone.app/logo.png" 
+                src={NEURALYZE_LOGO} 
                 alt="Neuralyze Logo" 
                 width={32} 
                 height={32} 
-                unoptimized
               />
             </div>
           </div>

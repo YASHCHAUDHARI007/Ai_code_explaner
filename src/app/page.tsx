@@ -13,6 +13,7 @@ import { type ErrorAnalysisOutput } from '@/ai/flows/ai-error-analysis-flow';
 import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
 import { Sparkles } from 'lucide-react';
+import { NEURALYZE_LOGO } from '@/lib/assets';
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
@@ -95,15 +96,14 @@ export default function Home() {
         <div className="relative flex flex-col items-center gap-10">
           <div className="relative animate-in fade-in zoom-in duration-1000 ease-out">
             <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full animate-pulse" />
-            <div className="relative glass-card p-10 rounded-[2.5rem] shadow-2xl flex items-center justify-center bg-primary">
+            <div className="relative glass-card p-10 rounded-[2.5rem] shadow-2xl flex items-center justify-center bg-[#0F172A] border border-primary/20">
               <Image 
-                src="https://neuralyze.edgeone.app/logo.png" 
+                src={NEURALYZE_LOGO} 
                 alt="Neuralyze" 
                 width={120} 
                 height={120} 
                 className="animate-float"
                 priority
-                unoptimized
               />
             </div>
           </div>
