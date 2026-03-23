@@ -77,7 +77,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
       toast({ 
         variant: 'destructive', 
         title: 'File Too Large', 
-        description: `ZIP files are limited to ${MAX_ZIP_SIZE / (1024 * 1024)}MB.` 
+        description: `ZIP files are limited to 15mb.` 
       });
       return;
     }
@@ -159,12 +159,12 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
               <Sparkles className="text-primary h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-xl font-headline font-bold">Workspace Settings</h2>
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Configure your analysis engine</p>
+              <h2 className="text-xl font-headline font-bold text-foreground">Workspace Settings</h2>
+              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Configure your analysis engine</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-2 bg-muted/50 p-1.5 rounded-2xl border border-white/5">
+          <div className="flex items-center gap-2 bg-secondary p-1.5 rounded-2xl border border-white/5">
             <button
               onClick={() => setMode('beginner')}
               className={cn(
@@ -195,7 +195,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
               <span className="text-[10px] font-bold uppercase tracking-widest">AI Intelligence</span>
             </div>
             <Select value={selectedModel} onValueChange={setSelectedModel}>
-              <SelectTrigger className="w-full h-12 bg-muted/50 border-white/5 focus:ring-primary rounded-2xl">
+              <SelectTrigger className="w-full h-12 bg-secondary border-white/5 focus:ring-primary rounded-2xl">
                 <SelectValue placeholder="Select Model" />
               </SelectTrigger>
               <SelectContent className="glass-card rounded-2xl">
@@ -210,7 +210,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
 
       <div className="flex-1 flex flex-col gap-6">
         <Tabs defaultValue="paste" className="flex-1 flex flex-col">
-          <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1.5 h-14 rounded-2xl border border-white/5">
+          <TabsList className="grid w-full grid-cols-3 bg-secondary p-1.5 h-14 rounded-2xl border border-white/5">
             <TabsTrigger value="paste" className="rounded-xl flex gap-2 font-bold text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Clipboard className="h-4 w-4" />
               Paste
@@ -227,7 +227,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
 
           <TabsContent value="paste" className="flex-1 mt-6">
             <div className="glass-card rounded-3xl overflow-hidden h-full min-h-[400px] flex flex-col">
-              <div className="bg-muted/30 px-6 py-3 border-b border-white/5 flex items-center justify-between">
+              <div className="bg-secondary/50 px-6 py-3 border-b border-white/5 flex items-center justify-between">
                 <span className="text-[10px] uppercase font-bold text-primary tracking-widest">Source Code</span>
                 <div className="flex gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500/30" />
@@ -237,7 +237,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
               </div>
               <Textarea
                 placeholder="Paste your source code here..."
-                className="flex-1 p-6 font-code text-sm bg-transparent border-none focus-visible:ring-0 resize-none"
+                className="flex-1 p-6 font-code text-sm bg-transparent border-none focus-visible:ring-0 resize-none text-foreground"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
               />
@@ -262,15 +262,14 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
                 </div>
               ) : (
                 <>
-                  <div className="bg-muted/50 p-6 rounded-3xl border border-white/5 group-hover:scale-110 group-hover:bg-primary/10 transition-all mb-6">
+                  <div className="bg-secondary p-6 rounded-3xl border border-white/5 group-hover:scale-110 group-hover:bg-primary/10 transition-all mb-6">
                     <FileUp className="h-12 w-12 text-muted-foreground/50 group-hover:text-primary" />
                   </div>
                   <h3 className="text-xl font-headline font-bold text-foreground">Click to Upload</h3>
-                  <p className="text-sm text-muted-foreground text-center mt-4 max-w-xs leading-relaxed">
-                    Supported formats: .py, .java, .js, .ts, .c, .cpp, .html, .css, .json, and .md
-                    <br />
-                    <span className="font-bold text-primary/80 uppercase tracking-widest text-[10px]">max limit: 15mb</span>
-                  </p>
+                  <div className="text-sm text-muted-foreground text-center mt-4 max-w-xs leading-relaxed space-y-1">
+                    <p>Supported formats: .py, .java, .js, .ts, .c, .cpp, .html, .css, .json, and .md</p>
+                    <p className="font-bold text-primary/80 uppercase tracking-widest text-[10px]">max limit: 15mb</p>
+                  </div>
                 </>
               )}
               <input 
@@ -285,7 +284,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
 
           <TabsContent value="github" className="flex-1 mt-6">
             <div className="h-full min-h-[400px] p-10 glass-card rounded-3xl flex flex-col items-center justify-center space-y-8">
-              <div className="bg-muted/50 p-6 rounded-3xl border border-white/5">
+              <div className="bg-secondary p-6 rounded-3xl border border-white/5">
                 <Github className="h-12 w-12 text-muted-foreground" />
               </div>
               <div className="w-full max-w-md space-y-4">
@@ -295,7 +294,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
                     placeholder="https://github.com/owner/repo" 
                     value={githubUrl}
                     onChange={(e) => setGithubUrl(e.target.value)}
-                    className="bg-muted/30 border-white/5 h-12 rounded-2xl px-6 focus:ring-primary"
+                    className="bg-secondary border-white/5 h-12 rounded-2xl px-6 focus:ring-primary text-foreground"
                   />
                   <Button 
                     onClick={handleGithubFetch} 
@@ -323,7 +322,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
             <AccordionContent>
               <Textarea
                 placeholder="Paste error messages or stack traces here..."
-                className="min-h-[150px] font-code text-xs bg-muted/20 border-white/5 focus-visible:ring-destructive rounded-xl resize-none mt-2"
+                className="min-h-[150px] font-code text-xs bg-secondary/50 border-white/5 focus-visible:ring-destructive rounded-xl resize-none mt-2 text-foreground"
                 value={errorMessage}
                 onChange={(e) => setErrorMessage(e.target.value)}
               />
@@ -332,7 +331,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
         </Accordion>
 
         <Button 
-          className="w-full h-16 text-xl font-headline font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-3xl shadow-[0_0_30px_rgba(var(--primary),0.3)] transition-all active:scale-[0.98] group relative overflow-hidden"
+          className="w-full h-16 text-xl font-headline font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-3xl shadow-[0_0_30px_rgba(var(--primary),0.3)] transition-all active:scale-[0.98] group relative overflow-hidden mt-8"
           onClick={handleAnalyze}
           disabled={isLoading || !code.trim() || !!zipProcessingStatus}
         >
