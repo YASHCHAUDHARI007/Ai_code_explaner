@@ -14,7 +14,6 @@ export function Header() {
                 alt="Neuralyze Logo" 
                 width={32} 
                 height={32} 
-                className="brightness-0" 
               />
             </div>
           </div>

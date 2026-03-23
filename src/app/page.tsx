@@ -101,7 +101,8 @@ export default function Home() {
                 alt="Neuralyze" 
                 width={120} 
                 height={120} 
-                className="animate-float brightness-0"
+                className="animate-float"
+                priority
               />
             </div>
           </div>
