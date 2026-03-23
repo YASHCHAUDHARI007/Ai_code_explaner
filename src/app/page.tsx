@@ -98,23 +98,23 @@ export default function Home() {
               <svg 
                 viewBox="0 0 24 24" 
                 fill="none" 
-                xmlns="http://www.w3.org/2000/svg" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
                 className="h-20 w-20 text-primary animate-float"
               >
-                <path 
-                  d="M12 2L4.5 6.5V15.5L12 20L19.5 15.5V6.5L12 2" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                />
-                <circle cx="12" cy="12" r="3" fill="currentColor"/>
-                <path 
-                  d="M12 7V9M12 15V17M7.5 9.5L9 10.5M15 13.5L16.5 14.5M7.5 14.5L9 13.5M15 10.5L16.5 9.5" 
-                  stroke="currentColor" 
-                  strokeWidth="1.5" 
-                  strokeLinecap="round"
-                />
+                <path d="M12 3l8 4.5v9l-8 4.5-8-4.5v-9L12 3z" />
+                <path d="M12 12l8-4.5" />
+                <path d="M12 12v9" />
+                <path d="M12 12L4 7.5" />
+                <circle cx="12" cy="12" r="2" fill="currentColor" />
+                <circle cx="12" cy="3" r="1" fill="currentColor" />
+                <circle cx="20" cy="7.5" r="1" fill="currentColor" />
+                <circle cx="20" cy="16.5" r="1" fill="currentColor" />
+                <circle cx="12" cy="21" r="1" fill="currentColor" />
+                <circle cx="4" cy="16.5" r="1" fill="currentColor" />
+                <circle cx="4" cy="7.5" r="1" fill="currentColor" />
               </svg>
             </div>
           </div>
