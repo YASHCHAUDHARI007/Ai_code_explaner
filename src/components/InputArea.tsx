@@ -32,7 +32,7 @@ const PRIORITY_FILES = ['README.md', 'package.json', 'requirements.txt', 'main.p
 
 export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
   const [code, setCode] = useState('');
-  const [mode, setMode] = useState<'beginner' | 'developer'>('developer');
+  const [mode, setMode] = useState<'beginner' | 'developer'>('beginner');
   const [selectedModel, setSelectedModel] = useState('auto');
   const [errorMessage, setErrorMessage] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
