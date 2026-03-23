@@ -115,7 +115,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
             <TabsTrigger 
               key={tab.value}
               value={tab.value} 
-              className="flex-1 rounded-2xl flex items-center gap-2 font-bold text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-white transition-all"
+              className="flex-1 rounded-2xl flex items-center gap-2 font-bold text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
             >
               <tab.icon className="h-4 w-4" />
               <span>{tab.label}</span>
@@ -199,7 +199,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
                 <div className="bg-muted/30 p-8 rounded-3xl border border-white/5 relative overflow-hidden group">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 blur-3xl -mr-32 -mt-32" />
                   <p className="text-sm text-foreground leading-loose whitespace-pre-wrap relative z-10 font-medium">
-                    {overview.workingFlow}
+                    {overview.workingLogic}
                   </p>
                 </div>
               ) : <LoadingPlaceholder label="Mapping execution paths..." />}
@@ -285,7 +285,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
                           key={hint} 
                           variant="outline" 
                           size="sm" 
-                          className="text-[10px] h-9 px-6 font-bold uppercase tracking-widest border-white/10 hover:bg-primary hover:text-white rounded-full transition-all"
+                          className="text-[10px] h-9 px-6 font-bold uppercase tracking-widest border-white/10 hover:bg-primary hover:text-primary-foreground rounded-full transition-all"
                           onClick={() => setQuestion(hint)}
                         >
                           {hint}
@@ -338,7 +338,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
                 <Button 
                   onClick={handleAsk} 
                   disabled={isAsking || !question.trim()}
-                  className="h-auto w-16 bg-primary hover:bg-primary/90 rounded-2xl shadow-lg shadow-primary/20 transition-all active:scale-95"
+                  className="h-auto w-16 bg-primary hover:bg-primary/90 rounded-2xl shadow-lg shadow-primary/20 transition-all active:scale-95 text-primary-foreground"
                 >
                   <Send className="h-6 w-6" />
                 </Button>

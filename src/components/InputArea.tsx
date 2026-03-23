@@ -169,7 +169,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
               onClick={() => setMode('beginner')}
               className={cn(
                 "flex items-center gap-2 px-5 py-2 text-xs font-bold rounded-xl transition-all",
-                mode === 'beginner' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                mode === 'beginner' ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:text-foreground hover:bg-white/5"
               )}
             >
               <User className="h-3.5 w-3.5" />
@@ -179,7 +179,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
               onClick={() => setMode('developer')}
               className={cn(
                 "flex items-center gap-2 px-5 py-2 text-xs font-bold rounded-xl transition-all",
-                mode === 'developer' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                mode === 'developer' ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:text-foreground hover:bg-white/5"
               )}
             >
               <Terminal className="h-3.5 w-3.5" />
@@ -211,15 +211,15 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
       <div className="flex-1 flex flex-col gap-6">
         <Tabs defaultValue="paste" className="flex-1 flex flex-col">
           <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1.5 h-14 rounded-2xl border border-white/5">
-            <TabsTrigger value="paste" className="rounded-xl flex gap-2 font-bold text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TabsTrigger value="paste" className="rounded-xl flex gap-2 font-bold text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Clipboard className="h-4 w-4" />
               Paste
             </TabsTrigger>
-            <TabsTrigger value="file" className="rounded-xl flex gap-2 font-bold text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TabsTrigger value="file" className="rounded-xl flex gap-2 font-bold text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <FileUp className="h-4 w-4" />
               Upload
             </TabsTrigger>
-            <TabsTrigger value="github" className="rounded-xl flex gap-2 font-bold text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TabsTrigger value="github" className="rounded-xl flex gap-2 font-bold text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Github className="h-4 w-4" />
               GitHub
             </TabsTrigger>
@@ -300,7 +300,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
                   <Button 
                     onClick={handleGithubFetch} 
                     disabled={isFetchingGitHub || !githubUrl}
-                    className="h-12 px-8 bg-primary hover:bg-primary/90 rounded-2xl font-bold shadow-lg shadow-primary/20"
+                    className="h-12 px-8 bg-primary hover:bg-primary/90 rounded-2xl font-bold shadow-lg shadow-primary/20 text-primary-foreground"
                   >
                     {isFetchingGitHub ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Fetch'}
                   </Button>
@@ -332,7 +332,7 @@ export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {
         </Accordion>
 
         <Button 
-          className="w-full h-16 text-xl font-headline font-bold bg-primary hover:bg-primary/90 text-white rounded-3xl shadow-[0_0_30px_rgba(var(--primary),0.3)] transition-all active:scale-[0.98] group relative overflow-hidden"
+          className="w-full h-16 text-xl font-headline font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-3xl shadow-[0_0_30px_rgba(var(--primary),0.3)] transition-all active:scale-[0.98] group relative overflow-hidden"
           onClick={handleAnalyze}
           disabled={isLoading || !code.trim() || !!zipProcessingStatus}
         >
