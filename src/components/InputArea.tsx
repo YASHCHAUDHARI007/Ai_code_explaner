@@ -27,7 +27,7 @@ interface InputAreaProps {
 const MAX_ZIP_SIZE = 15 * 1024 * 1024; 
 const MAX_TOTAL_CHARS = 50000;
 const IGNORED_DIRS = ['node_modules', '.git', 'dist', 'build', 'venv', '__pycache__', 'images', 'videos', 'bin', 'obj', '.next', 'out', 'target'];
-const SUPPORTED_EXTENSIONS = ['.py', '.java', '.js', '.ts', '.tsx', '.jsx', '.c', '.cpp', '.h', '.hpp', '.html', '.css', '.json', '.md', '.go', '.rs', '.php'];
+const SUPPORTED_EXTENSIONS = ['.py', '.java', '.js', '.ts', '.tsx', '.jsx', '. Eisen', '.c', '.cpp', '.h', '.hpp', '.html', '.css', '.json', '.md', '.go', '.rs', '.php'];
 const PRIORITY_FILES = ['README.md', 'package.json', 'requirements.txt', 'main.py', 'app.py', 'index.js', 'server.js', 'tsconfig.json', 'Cargo.toml', 'pom.xml', 'build.gradle'];
 
 export function InputArea({ onAnalyze, isLoading }: InputAreaProps) {

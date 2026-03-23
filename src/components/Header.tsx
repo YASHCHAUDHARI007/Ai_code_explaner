@@ -1,4 +1,4 @@
-import { Bug, BookOpen } from 'lucide-react';
+import { Bug, BookOpen, Sparkles } from 'lucide-react';
 
 export function Header() {
   return (

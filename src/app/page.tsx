@@ -11,7 +11,7 @@ import { type DebugCodeOutput } from '@/ai/flows/ai-debugging-assistant-flow';
 import { type ErrorAnalysisOutput } from '@/ai/flows/ai-error-analysis-flow';
 import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Play } from 'lucide-react';
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
@@ -98,7 +98,7 @@ export default function Home() {
               <svg 
                 viewBox="0 0 24 24" 
                 fill="none" 
-                stroke="currentColor" 
+                stroke="black" 
                 strokeWidth="2" 
                 strokeLinecap="round" 
                 strokeLinejoin="round"
@@ -108,13 +108,13 @@ export default function Home() {
                 <path d="M12 12l8-4.5" />
                 <path d="M12 12v9" />
                 <path d="M12 12L4 7.5" />
-                <circle cx="12" cy="12" r="2" fill="currentColor" />
-                <circle cx="12" cy="3" r="1" fill="currentColor" />
-                <circle cx="20" cy="7.5" r="1" fill="currentColor" />
-                <circle cx="20" cy="16.5" r="1" fill="currentColor" />
-                <circle cx="12" cy="21" r="1" fill="currentColor" />
-                <circle cx="4" cy="16.5" r="1" fill="currentColor" />
-                <circle cx="4" cy="7.5" r="1" fill="currentColor" />
+                <circle cx="12" cy="12" r="2" fill="black" />
+                <circle cx="12" cy="3" r="1" fill="black" />
+                <circle cx="20" cy="7.5" r="1" fill="black" />
+                <circle cx="20" cy="16.5" r="1" fill="black" />
+                <circle cx="12" cy="21" r="1" fill="black" />
+                <circle cx="4" cy="16.5" r="1" fill="black" />
+                <circle cx="4" cy="7.5" r="1" fill="black" />
               </svg>
             </div>
           </div>
