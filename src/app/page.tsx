@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Header } from '@/components/Header';
 import { InputArea } from '@/components/InputArea';
 import { OutputArea } from '@/components/OutputArea';
@@ -94,26 +95,14 @@ export default function Home() {
         <div className="relative flex flex-col items-center gap-10">
           <div className="relative animate-in fade-in zoom-in duration-1000 ease-out">
             <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full animate-pulse" />
-            <div className="relative glass-card p-8 rounded-3xl shadow-2xl">
-              <svg 
-                viewBox="0 0 100 100" 
-                fill="none" 
-                className="h-24 w-24 text-primary animate-float"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path 
-                  d="M50 20C40 20 30 25 25 35C22 40 20 45 20 50C20 60 25 68 32 73C34 75 35 78 35 81V83C35 85 37 87 39 87H61C63 87 65 85 65 83V81C65 78 66 75 68 73C75 68 80 60 80 50C80 45 78 40 75 35C70 25 60 20 50 20Z" 
-                  stroke="currentColor" 
-                  strokeWidth="3" 
-                />
-                <circle cx="50" cy="40" r="4" fill="currentColor" />
-                <circle cx="35" cy="45" r="3" fill="currentColor" />
-                <circle cx="65" cy="45" r="3" fill="currentColor" />
-                <circle cx="42" cy="58" r="3" fill="currentColor" />
-                <circle cx="58" cy="58" r="3" fill="currentColor" />
-                <circle cx="50" cy="70" r="3" fill="currentColor" />
-                <path d="M50 40L35 45M50 40L65 45M35 45L42 58M65 45L58 58M42 58L50 70M58 58L50 70" stroke="currentColor" strokeWidth="1.5" />
-              </svg>
+            <div className="relative glass-card p-10 rounded-[2.5rem] shadow-2xl flex items-center justify-center bg-primary">
+              <Image 
+                src="/logo.png" 
+                alt="Neuralyze" 
+                width={120} 
+                height={120} 
+                className="animate-float brightness-0"
+              />
             </div>
           </div>
 
