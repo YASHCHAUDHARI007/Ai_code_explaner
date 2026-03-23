@@ -7,27 +7,25 @@ export function Header() {
         <div className="flex items-center gap-3 group cursor-pointer">
           <div className="relative">
             <div className="absolute inset-0 bg-primary/20 blur-lg rounded-xl group-hover:bg-primary/40 transition-colors" />
-            <div className="relative bg-primary p-2.5 rounded-xl shadow-lg shadow-primary/20">
+            <div className="relative bg-primary p-2 rounded-xl shadow-lg shadow-primary/20">
               <svg 
-                viewBox="0 0 24 24" 
+                viewBox="0 0 100 100" 
                 fill="none" 
-                stroke="black" 
-                strokeWidth="2.5" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
-                className="h-6 w-6"
+                className="h-7 w-7 text-black"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <path d="M12 3l8 4.5v9l-8 4.5-8-4.5v-9L12 3z" />
-                <path d="M12 12l8-4.5" />
-                <path d="M12 12v9" />
-                <path d="M12 12L4 7.5" />
-                <circle cx="12" cy="12" r="2" fill="black" />
-                <circle cx="12" cy="3" r="1.5" fill="black" />
-                <circle cx="20" cy="7.5" r="1.5" fill="black" />
-                <circle cx="20" cy="16.5" r="1.5" fill="black" />
-                <circle cx="12" cy="21" r="1.5" fill="black" />
-                <circle cx="4" cy="16.5" r="1.5" fill="black" />
-                <circle cx="4" cy="7.5" r="1.5" fill="black" />
+                <path 
+                  d="M50 20C40 20 30 25 25 35C22 40 20 45 20 50C20 60 25 68 32 73C34 75 35 78 35 81V83C35 85 37 87 39 87H61C63 87 65 85 65 83V81C65 78 66 75 68 73C75 68 80 60 80 50C80 45 78 40 75 35C70 25 60 20 50 20Z" 
+                  stroke="currentColor" 
+                  strokeWidth="3" 
+                />
+                <circle cx="50" cy="40" r="4" fill="currentColor" />
+                <circle cx="35" cy="45" r="3" fill="currentColor" />
+                <circle cx="65" cy="45" r="3" fill="currentColor" />
+                <circle cx="42" cy="58" r="3" fill="currentColor" />
+                <circle cx="58" cy="58" r="3" fill="currentColor" />
+                <circle cx="50" cy="70" r="3" fill="currentColor" />
+                <path d="M50 40L35 45M50 40L65 45M35 45L42 58M65 45L58 58M42 58L50 70M58 58L50 70" stroke="currentColor" strokeWidth="1.5" />
               </svg>
             </div>
           </div>
