@@ -1,4 +1,4 @@
-import { Bug, BookOpen, Sparkles } from 'lucide-react';
+import { Bug, BookOpen } from 'lucide-react';
 
 export function Header() {
   return (
@@ -12,7 +12,7 @@ export function Header() {
                 viewBox="0 0 24 24" 
                 fill="none" 
                 stroke="black" 
-                strokeWidth="2" 
+                strokeWidth="2.5" 
                 strokeLinecap="round" 
                 strokeLinejoin="round"
                 className="h-6 w-6"
@@ -22,12 +22,12 @@ export function Header() {
                 <path d="M12 12v9" />
                 <path d="M12 12L4 7.5" />
                 <circle cx="12" cy="12" r="2" fill="black" />
-                <circle cx="12" cy="3" r="1" fill="black" />
-                <circle cx="20" cy="7.5" r="1" fill="black" />
-                <circle cx="20" cy="16.5" r="1" fill="black" />
-                <circle cx="12" cy="21" r="1" fill="black" />
-                <circle cx="4" cy="16.5" r="1" fill="black" />
-                <circle cx="4" cy="7.5" r="1" fill="black" />
+                <circle cx="12" cy="3" r="1.5" fill="black" />
+                <circle cx="20" cy="7.5" r="1.5" fill="black" />
+                <circle cx="20" cy="16.5" r="1.5" fill="black" />
+                <circle cx="12" cy="21" r="1.5" fill="black" />
+                <circle cx="4" cy="16.5" r="1.5" fill="black" />
+                <circle cx="4" cy="7.5" r="1.5" fill="black" />
               </svg>
             </div>
           </div>

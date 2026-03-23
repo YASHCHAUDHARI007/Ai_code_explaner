@@ -89,7 +89,7 @@ export default function Home() {
 
   if (showSplash) {
     return (
-      <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background overflow-hidden">
+      <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#060B14] overflow-hidden">
         <div className="absolute inset-0 cyber-grid opacity-20" />
         <div className="relative flex flex-col items-center gap-10">
           <div className="relative animate-in fade-in zoom-in duration-1000 ease-out">
@@ -109,12 +109,12 @@ export default function Home() {
                 <path d="M12 12v9" />
                 <path d="M12 12L4 7.5" />
                 <circle cx="12" cy="12" r="2" fill="black" />
-                <circle cx="12" cy="3" r="1" fill="black" />
-                <circle cx="20" cy="7.5" r="1" fill="black" />
-                <circle cx="20" cy="16.5" r="1" fill="black" />
-                <circle cx="12" cy="21" r="1" fill="black" />
-                <circle cx="4" cy="16.5" r="1" fill="black" />
-                <circle cx="4" cy="7.5" r="1" fill="black" />
+                <circle cx="12" cy="3" r="1.5" fill="black" />
+                <circle cx="20" cy="7.5" r="1.5" fill="black" />
+                <circle cx="20" cy="16.5" r="1.5" fill="black" />
+                <circle cx="12" cy="21" r="1.5" fill="black" />
+                <circle cx="4" cy="16.5" r="1.5" fill="black" />
+                <circle cx="4" cy="7.5" r="1.5" fill="black" />
               </svg>
             </div>
           </div>
@@ -125,7 +125,7 @@ export default function Home() {
             </h1>
             <div className="flex items-center justify-center gap-4">
               <div className="h-px w-12 bg-primary/30 animate-in slide-in-from-left-full duration-1000 delay-700" />
-              <p className="text-xs font-bold text-primary/80 uppercase tracking-[0.5em] animate-in fade-in duration-1000 delay-1000">
+              <p className="text-[10px] font-bold text-primary uppercase tracking-[0.5em] animate-in fade-in duration-1000 delay-1000">
                 Initializing Engine
               </p>
               <div className="h-px w-12 bg-primary/30 animate-in slide-in-from-right-full duration-1000 delay-700" />

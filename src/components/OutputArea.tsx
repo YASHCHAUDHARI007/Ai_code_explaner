@@ -24,7 +24,8 @@ import {
   FileCode,
   MapPin,
   Activity,
-  FileJson
+  FileJson,
+  Sparkles
 } from 'lucide-react';
 import { type AiProjectOverviewOutput } from '@/ai/flows/ai-project-overview';
 import { type CodeExplanationOutput } from '@/ai/flows/ai-line-by-line-explanation';
@@ -67,7 +68,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
       <div className="h-full flex flex-col items-center justify-center text-center p-16 glass-card border-2 border-dashed border-white/10 rounded-[2.5rem] relative overflow-hidden group">
         <div className="absolute inset-0 cyber-grid opacity-10 pointer-events-none" />
         <div className="bg-muted/50 p-8 rounded-full mb-8 relative">
-          <div className="absolute inset-0 bg-primary/10 blur-2xl animate-pulse" />
+          <div className="absolute inset-0 bg-primary/10 blur-[100px] rounded-full animate-pulse" />
           <Terminal className="h-16 w-16 text-muted-foreground/30 relative" />
         </div>
         <h3 className="text-2xl font-headline font-bold text-muted-foreground/70 tracking-tight">Awaiting Code Source</h3>
@@ -173,7 +174,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
                     </h4>
                     <div className="flex flex-wrap gap-2.5">
                       {overview.coreTechnologies.map((tech, idx) => (
-                        <Badge key={idx} className="bg-primary/10 border-primary/20 text-primary font-code text-[11px] py-1.5 px-4 rounded-xl">
+                        <Badge key={idx} className="bg-primary border-none text-primary-foreground font-code text-[11px] py-1.5 px-4 rounded-xl">
                           {tech}
                         </Badge>
                       ))}
@@ -199,7 +200,7 @@ export function OutputArea({ overview, explanations, debugging, errorAnalysis, c
                 <div className="bg-muted/30 p-8 rounded-3xl border border-white/5 relative overflow-hidden group">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 blur-3xl -mr-32 -mt-32" />
                   <p className="text-sm text-foreground leading-loose whitespace-pre-wrap relative z-10 font-medium">
-                    {overview.workingLogic}
+                    {overview.workingFlow}
                   </p>
                 </div>
               ) : <LoadingPlaceholder label="Mapping execution paths..." />}
