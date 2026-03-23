@@ -1,4 +1,4 @@
-import { Code2, Bug, BookOpen } from 'lucide-react';
+import { Bug, BookOpen } from 'lucide-react';
 
 export function Header() {
   return (
@@ -8,7 +8,27 @@ export function Header() {
           <div className="relative">
             <div className="absolute inset-0 bg-primary/20 blur-lg rounded-xl group-hover:bg-primary/40 transition-colors" />
             <div className="relative bg-primary p-2.5 rounded-xl shadow-lg shadow-primary/20">
-              <Code2 className="text-white h-6 w-6" />
+              <svg 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-6 w-6 text-black"
+              >
+                <path 
+                  d="M12 2L4.5 6.5V15.5L12 20L19.5 15.5V6.5L12 2" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                />
+                <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                <path 
+                  d="M12 7V9M12 15V17M7.5 9.5L9 10.5M15 13.5L16.5 14.5M7.5 14.5L9 13.5M15 10.5L16.5 9.5" 
+                  stroke="currentColor" 
+                  strokeWidth="1.5" 
+                  strokeLinecap="round"
+                />
+              </svg>
             </div>
           </div>
           <h1 className="text-2xl font-headline font-bold tracking-tighter">

@@ -11,7 +11,7 @@ import { type DebugCodeOutput } from '@/ai/flows/ai-debugging-assistant-flow';
 import { type ErrorAnalysisOutput } from '@/ai/flows/ai-error-analysis-flow';
 import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
-import { Code2, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
@@ -95,7 +95,27 @@ export default function Home() {
           <div className="relative animate-in fade-in zoom-in duration-1000 ease-out">
             <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full animate-pulse" />
             <div className="relative glass-card p-8 rounded-3xl shadow-2xl">
-              <Code2 className="h-20 w-20 text-primary animate-float" />
+              <svg 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-20 w-20 text-primary animate-float"
+              >
+                <path 
+                  d="M12 2L4.5 6.5V15.5L12 20L19.5 15.5V6.5L12 2" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                />
+                <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                <path 
+                  d="M12 7V9M12 15V17M7.5 9.5L9 10.5M15 13.5L16.5 14.5M7.5 14.5L9 13.5M15 10.5L16.5 9.5" 
+                  stroke="currentColor" 
+                  strokeWidth="1.5" 
+                  strokeLinecap="round"
+                />
+              </svg>
             </div>
           </div>
 
