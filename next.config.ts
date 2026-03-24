@@ -36,6 +36,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    turbopack: {
+      resolveOptions: {
+        root: __dirname,
+      },
+    },
+  },
 };
 
 export default nextConfig;
