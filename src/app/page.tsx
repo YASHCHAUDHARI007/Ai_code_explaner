@@ -52,31 +52,65 @@ export default function Home() {
         description: `Identified as ${finalLanguage.toUpperCase()} (${Math.round(detection.confidence * 100)}% confidence)`,
       });
 
-      const results = await Promise.allSettled([
-        getProjectOverview(code, mode, model),
-        getLineByLineExplanation(code, finalLanguage, mode, model),
-        getDebugAnalysis(code, finalLanguage, mode, model),
-        errorMessage ? getErrorAnalysis(code, errorMessage, finalLanguage, model) : Promise.resolve(null)
-      ]);
-
-      if (results[0].status === 'fulfilled') setOverview(results[0].value);
-      if (results[1].status === 'fulfilled') setExplanations(results[1].value);
-      if (results[2].status === 'fulfilled') setDebugging(results[2].value);
-      if (results[3].status === 'fulfilled') setErrorAnalysis(results[3].value);
-
-      const failures = results.filter(r => r.status === 'rejected');
-      if (failures.length > 0) {
+      try {
+        const overviewResult = await getProjectOverview(code, mode, model);
+        setOverview(overviewResult);
+        toast({ title: "Project Overview Complete", description: "Project overview analysis has been successfully completed." });
+      } catch (e) {
+        console.error("Project Overview Error:", e);
         toast({
           variant: "destructive",
-          title: "Partial Analysis Failure",
-          description: `Failed to complete ${failures.length} analysis tasks.`,
+          title: "Project Overview Failed",
+          description: "Could not complete project overview analysis.",
         });
-      } else {
+      }
+
+      try {
+        const explanationResult = await getLineByLineExplanation(code, finalLanguage, mode, model);
+        setExplanations(explanationResult);
+        toast({ title: "Line-by-Line Explanation Complete", description: "Line-by-line explanation has been successfully completed." });
+      } catch (e) {
+        console.error("Line-by-Line Explanation Error:", e);
         toast({
+          variant: "destructive",
+          title: "Line-by-Line Explanation Failed",
+          description: "Could not complete line-by-line explanation.",
+        });
+      }
+
+      try {
+        const debugResult = await getDebugAnalysis(code, finalLanguage, mode, model);
+        setDebugging(debugResult);
+        toast({ title: "Debugging Analysis Complete", description: "Debugging analysis has been successfully completed." });
+      } catch (e) {
+        console.error("Debugging Analysis Error:", e);
+        toast({
+          variant: "destructive",
+          title: "Debugging Analysis Failed",
+          description: "Could not complete debugging analysis.",
+        });
+      }
+
+      if (errorMessage) {
+        try {
+          const errorAnalysisResult = await getErrorAnalysis(code, errorMessage, finalLanguage, model);
+          setErrorAnalysis(errorAnalysisResult);
+          toast({ title: "Error Analysis Complete", description: "Error analysis has been successfully completed." });
+        } catch (e) {
+          console.error("Error Analysis Error:", e);
+          toast({
+            variant: "destructive",
+            title: "Error Analysis Failed",
+            description: "Could not complete error analysis.",
+          });
+        }
+      }
+      
+      toast({
           title: "Analysis Complete",
           description: `Insights generated for ${mode} level using ${model === 'auto' ? 'Intelligent Select' : model}.`,
         });
-      }
+
     } catch (error) {
       console.error("Critical Analysis Error:", error);
       toast({
